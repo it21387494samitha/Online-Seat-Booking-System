@@ -1,29 +1,29 @@
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-require('dotenv').config();
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv'
+import userRoute from './Routers/UserRouter.js'; 
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('Could not connect to MongoDB', err));
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('Could not connect to MongoDB', err));
 
 // Import Routes
-
+// const userRoute = require('./Routers/UserRouter');
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
 // Use Routes
-
+app.use('/users',userRoute);
 
 // Start the Server
 app.listen(PORT, () => {
