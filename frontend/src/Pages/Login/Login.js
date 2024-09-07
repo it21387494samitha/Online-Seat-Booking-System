@@ -1,12 +1,17 @@
-// src/Login.js
 import React, { useState } from 'react';
+import axios from 'axios';
 import { auth, googleProvider } from '../../firebase';
-import { signInWithPopup, signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithPopup } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
+
+const adminEmails = ['dhananjayasamitha68@gmail.com']; // List of admin emails
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginMethod, setLoginMethod] = useState('google'); // 'email' or 'google'
+
+  const navigate = useNavigate();
 
   const handleGoogleLogin = () => {
     signInWithPopup(auth, googleProvider)
@@ -16,6 +21,7 @@ function Login() {
 
         if (email.endsWith('@gmail.com')) {
           alert('Login successful!');
+          navigate('/');
         } else {
           auth.signOut();
           alert('Only Google emails are allowed.');
@@ -28,9 +34,25 @@ function Login() {
   };
 
   const handleEmailLogin = () => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+    axios.post('http://localhost:5000/users/login', { email, password })  // POST to your backend
+      .then((response) => {
+        const { token } = response.data;
+
+        // Check if the user is an admin
+        const isAdmin = adminEmails.includes(email);
+        const userRole = isAdmin ? 'admin' : 'user';
+
         alert('Login successful!');
+        // Store token and user role in localStorage or session
+        localStorage.setItem('token', token);
+        localStorage.setItem('userRole', userRole);
+
+        // Navigate to different routes based on role
+        if (isAdmin) {
+          navigate('/admin');  // Redirect to admin dashboard
+        } else {
+          navigate('/');  // Redirect to regular user dashboard
+        }
       })
       .catch((error) => {
         console.error('Error during email login:', error);
