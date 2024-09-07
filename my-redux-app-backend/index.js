@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv'
 import userRoute from './Routers/UserRouter.js'; 
+import SeatRouter from './Routers/SeatRouter.js';
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use(bodyParser.json());
 
 // Use Routes
 app.use('/users',userRoute);
+app.use('/seat', SeatRouter );
 
 // Start the Server
 app.listen(PORT, () => {
