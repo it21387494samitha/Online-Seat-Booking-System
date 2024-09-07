@@ -1,10 +1,24 @@
 import express from 'express';
-import {RegisterUser, Userlogin } from '../Controllers/UserController.js';
+import { verifyToken } from '../Middleware/VerifyToken.js'; 
+import { RegisterUser, Userlogin } from '../Controllers/UserController.js'; 
 
-const userRoute = express.Router();
+const router = express.Router();
 
-userRoute.post('/register', RegisterUser);
-userRoute.post('/login',Userlogin);
+// Public routes
+router.post('/register', RegisterUser); 
+router.post('/login', Userlogin);     
 
-export default userRoute;
 
+
+// Protected routes
+router.get('/profile', verifyToken, (req, res) => {
+    
+    res.json({ message: "This is a protected profile route", user: req.user });
+});
+
+
+router.get('/settings', verifyToken, (req, res) => {
+    res.json({ message: "Access to settings", user: req.user });
+});
+
+export default router;
