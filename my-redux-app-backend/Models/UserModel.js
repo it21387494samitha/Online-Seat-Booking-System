@@ -27,7 +27,7 @@ const user = new mongoose.Schema ({
         type : Boolean,
         
     },
-    Passaword:{
+    Password:{
         type: String,
         required : true
     },
