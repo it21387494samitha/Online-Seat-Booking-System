@@ -1,23 +1,22 @@
-
 import mongoose from "mongoose";
 
-const seatSchema = new mongoose.Schema({
-  row: {
-    type: String,
-    required: true,
-  },
-  number: {
-    type: Number,
-    required: true,
-  },
-  isBooked: {
-    type: Boolean,
-    default: false,
-  },
-  bookedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Adjust if your User model is named differently
-  },
+const SeatSchema = new mongoose.Schema({
+    seatNumber: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    isBooked: {
+        type: Boolean,
+        default: false
+    },
+    bookedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user', // Reference the User model
+        default: null
+    }
 });
 
-export default seatSchema;
+const SeatModel = mongoose.model("seat", SeatSchema);
+
+export default SeatModel;

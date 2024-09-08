@@ -46,6 +46,7 @@ function Login() {
         // Store token and user role in localStorage or session
         localStorage.setItem('token', token);
         localStorage.setItem('userRole', userRole);
+        console.info(token);
 
         // Navigate to different routes based on role
         if (isAdmin) {
@@ -87,6 +88,11 @@ function Login() {
           <button onClick={handleEmailLogin}>Sign in with Email</button>
         </div>
       )}
+
+      <div> </div> 
+        
+        
+        
     </div>
   );
 }
