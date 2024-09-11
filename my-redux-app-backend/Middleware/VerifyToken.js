@@ -1,21 +1,19 @@
 import jwt from 'jsonwebtoken';
 
-const secretKey = "samitha"; // Same secret key used for signing the token
+const secretKey = "samitha"; // Ensure this matches the key used to sign the token
 
-export function verifyToken(req, res, next) {
-    const token = req.headers['authorization'];
+export const verifyToken = (req, res, next) => {
+    const token = req.headers['authorization']?.split(' ')[1]; // Expecting 'Bearer <token>'
 
     if (!token) {
-        return res.status(403).json({ message: "No token provided" });
+        return res.status(401).json({ message: 'Access denied, no token provided' });
     }
 
-    jwt.verify(token, secretKey, (err, decoded) => {
-        if (err) {
-            return res.status(401).json({ message: "Failed to authenticate token", error: err });
-        }
-
-        // If token is valid, save the decoded user info to request for use in other routes
-        req.user = decoded;
-        next();
-    });
-}
+    try {
+        const decoded = jwt.verify(token, secretKey);
+        req.user = decoded; // Attach user info to request
+        next(); // Continue to the next middleware/route handler
+    } catch (err) {
+        return res.status(401).json({ message: 'Invalid token' });
+    }
+};

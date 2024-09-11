@@ -19,7 +19,7 @@ function CustomerDash() {
         <h1>Welcome to the Home Page</h1>
         <p>This is your home page built with React.</p>
         <button onClick={() => alert('Button clicked!')}>Click Me</button>
-        <button onClick={() => navigate('/booking')}>Go to Booking Page</button>
+        <button onClick={() => navigate('/list')}>Go to Booking Page</button>
       </header>
     </div>
   );

@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv'
 import userRoute from './Routers/UserRouter.js'; 
 import seatRoutes from './Routers/seatRoutes.js';
+import eventRoutes from './Routers/EventRoutes.js';
 
 
 dotenv.config();
@@ -28,7 +29,8 @@ app.use(bodyParser.json());
 app.use('/users',userRoute);
 
 app.use("/api/seats", seatRoutes);
-
+app.use("/api/events", eventRoutes);
+app.use('/api/events', eventRoutes);
 
 // Start the Server
 app.listen(PORT, () => {

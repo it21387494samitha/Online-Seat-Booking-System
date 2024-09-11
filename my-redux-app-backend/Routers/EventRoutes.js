@@ -1,13 +1,20 @@
 import express from 'express';
-import { createEvent, getEvents } from '../Controllers/EventController.js';
-import { verifyToken } from '../Middleware/AuthMiddleware.js';  // Middleware for verifying JWT token
+import { verifyToken } from '../Middleware/VerifyToken.js';
+import { 
+    CreateEvent, 
+    GetEvents, 
+    GetEventById, 
+    UpdateEvent, 
+    DeleteEvent 
+} from '../Controllers/EventController.js';
 
 const router = express.Router();
 
-// Route to create a new event (Admin only)
-router.post("/create", verifyToken, createEvent);
-
-// Route to get all events (Public route)
-router.get("/", getEvents);
+// Protected routes for event management
+router.post('/create', verifyToken, CreateEvent);
+router.get('/', verifyToken, GetEvents);
+router.get('/:eventId', verifyToken, GetEventById);
+router.put('/:eventId', verifyToken, UpdateEvent);
+router.delete('/:eventId', verifyToken, DeleteEvent);
 
 export default router;

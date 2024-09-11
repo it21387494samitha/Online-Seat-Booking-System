@@ -1,46 +1,84 @@
-import EventModel from "../Models/EventModel.js";
-import UserModel from "../Models/UserModel.js";
+import EventModel from '../Models/EventModel.js';
 
-// Create a new event (Admin only)
-export const createEvent = async (req, res) => {
-  try {
-    // Check if the logged-in user is an admin
-    const user = await UserModel.findById(req.user.id);
-    if (!user || !user.isAdmin) {
-      return res.status(403).json({ message: "Only admins can create events" });
+// Create an event
+export const CreateEvent = async (req, res) => {
+    const { name, date, location, description } = req.body;
+    const userId = req.user.id; // Assuming user is authenticated
+
+    try {
+        const newEvent = new EventModel({
+            name,
+            date,
+            location,
+            description,
+            createdBy: userId
+        });
+
+        const savedEvent = await newEvent.save();
+        res.status(201).json(savedEvent);
+    } catch (error) {
+        res.status(500).json({ message: 'Error creating event', error });
     }
-
-    const { eventName, eventDescription, eventDate, location } = req.body;
-
-    // Validate input
-    if (!eventName || !eventDescription || !eventDate || !location) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-
-    // Create the event
-    const newEvent = new EventModel({
-      eventName,
-      eventDescription,
-      eventDate,
-      location,
-      createdBy: req.user.id,  // Admin who created the event
-    });
-
-    await newEvent.save();
-    res.status(201).json({ message: "Event created successfully", event: newEvent });
-  } catch (error) {
-    console.error("Error creating event:", error);
-    res.status(500).json({ message: "Error creating event", error });
-  }
 };
 
-// Get all events (Public route)
-export const getEvents = async (req, res) => {
-  try {
-    const events = await EventModel.find();
-    res.status(200).json(events);
-  } catch (error) {
-    console.error("Error fetching events:", error);
-    res.status(500).json({ message: "Error fetching events", error });
-  }
+// Get all events
+export const GetEvents = async (req, res) => {
+    try {
+        const events = await EventModel.find();
+        res.status(200).json(events);
+    } catch (error) {
+        res.status(500).json({ message: 'Error retrieving events', error });
+    }
+};
+
+// Get event by ID
+export const GetEventById = async (req, res) => {
+    const { eventId } = req.params;
+
+    try {
+        const event = await EventModel.findById(eventId);
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+        res.status(200).json(event);
+    } catch (error) {
+        res.status(500).json({ message: 'Error retrieving event', error });
+    }
+};
+
+// Update an event
+export const UpdateEvent = async (req, res) => {
+    const { eventId } = req.params;
+    const { name, date, location, description } = req.body;
+
+    try {
+        const updatedEvent = await EventModel.findByIdAndUpdate(
+            eventId,
+            { name, date, location, description },
+            { new: true }
+        );
+
+        if (!updatedEvent) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
+        res.status(200).json(updatedEvent);
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating event', error });
+    }
+};
+
+// Delete an event
+export const DeleteEvent = async (req, res) => {
+    const { eventId } = req.params;
+
+    try {
+        const deletedEvent = await EventModel.findByIdAndDelete(eventId);
+        if (!deletedEvent) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+        res.status(200).json({ message: 'Event deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting event', error });
+    }
 };

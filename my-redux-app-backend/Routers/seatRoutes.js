@@ -1,16 +1,18 @@
 import express from 'express';
-import { verifyToken } from "../Middleware/VerifyToken.js";
-import { bookSeat, getSeats, cancelBooking } from "../Controllers/SeatBookingController.js";
+import { verifyToken } from '../Middleware/VerifyToken.js';
+import { ReserveSeat, CancelReservation, ViewAvailableSeats, CreateSeat } from '../Controllers/SeatBookingController.js';
 
 const router = express.Router();
 
-// Route to book a seat
-router.post("/book", verifyToken, bookSeat);
 
-// Route to view all seats
-router.get("/seats", getSeats);
+router.post('/create', verifyToken, CreateSeat);
+// Reserve a seat (protected route)
+router.post('/reserve', verifyToken, ReserveSeat);
 
-// Route to cancel a seat booking
-router.post("/cancel", verifyToken, cancelBooking);
+// Cancel a reservation (protected route)
+router.post('/cancel', verifyToken, CancelReservation);
+
+// View available seats for an event
+router.get('/available/:eventId', verifyToken, ViewAvailableSeats);
 
 export default router;

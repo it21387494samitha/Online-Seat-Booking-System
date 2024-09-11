@@ -1,29 +1,27 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const eventSchema = new mongoose.Schema({
-  eventName: {
-    type: String,
-    required: true,
-  },
-  eventDescription: {
-    type: String,
-    required: true,
-  },
-  eventDate: {
-    type: Date,
-    required: true,
-  },
-  location: {
-    type: String,
-    required: true,
-  },
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',  // Refers to the admin user who created the event
-    required: true,
-  },
-}, { timestamps: true });
+    name: {
+        type: String,
+        required: true
+    },
+    date: {
+        type: Date,
+        required: true
+    },
+    location: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    }
+});
 
-const EventModel = mongoose.model("event", eventSchema);
-
+const EventModel = mongoose.model('Event', eventSchema);
 export default EventModel;

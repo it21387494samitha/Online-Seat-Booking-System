@@ -6,6 +6,10 @@ import CustomerDash from './Pages/Home/CustomerDash';
 import AdminDash from './Pages/Home/AdminDash'
 import SeatBooking from './Pages/SeatBooking/SeatBooking';
 import AdminSeatManagement from './Admin/SeatAdd';
+import Adminevent from './Admin/ManageEvents'
+import EventForm from './Admin/EventForm';
+import ManageEvents from './Admin/ManageEvents';
+import EventList from './Pages/Event/EventList';
 
 function App() {
   return (
@@ -18,6 +22,9 @@ function App() {
           <Route path='/admin' element ={<AdminDash/>} />
           <Route path='/booking' element ={<SeatBooking/>} />
           <Route path='/ad' element={<AdminSeatManagement/>} />
+          <Route path='/mevent' element={<ManageEvents/>} />
+          <Route path='/event' element={<EventForm/>} />
+          <Route path='/list' element={<EventList/>} />
           
         </Routes>
       </div>

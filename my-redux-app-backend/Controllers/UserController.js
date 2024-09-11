@@ -1,10 +1,9 @@
 import mongoose from "mongoose";
-import UserSchema from "../Models/UserModel.js";
+import UserModel from "../Models/UserModel.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 const secretKey = "samitha"; // Use a secure secret key
-export const UserModel = mongoose.model("user", UserSchema);
 
 // Helper function to validate Google email
 const isGoogleEmail = (email) => {
@@ -12,63 +11,73 @@ const isGoogleEmail = (email) => {
     return emailDomain === 'gmail.com' || emailDomain.endsWith('.google.com');
 };
 
+// Register User
 export function RegisterUser(req, res) {
-    const { firstName, LastName, Phone, Email, Age, Subscription, Password, isAdmin } = req.body;
+    const { firstName, lastName, phone, email, age, subscription, password, isAdmin } = req.body;
 
-    // Validate if the email is a Google email
-    if (!isGoogleEmail(Email)) {
+    if (!firstName || !lastName || !phone || !email || !age || !password) {
+        return res.status(400).json({ message: "All fields are required." });
+    }
+
+    if (!isGoogleEmail(email)) {
         return res.status(400).json({ message: "Please use a valid Google email (e.g., @gmail.com)." });
     }
 
-    // Hash the password before saving the user
-    bcrypt.hash(Password, 10, (err, hash) => {
-        if (err) {
-            return res.status(500).json({ message: "Error hashing password", error: err });
-        }
+    UserModel.findOne({ email })
+        .then(existingUser => {
+            if (existingUser) {
+                return res.status(400).json({ message: "Email already registered." });
+            }
 
-        // Create the new user instance
-        let newuser = new UserModel({
-            firstName,
-            LastName,
-            Phone,
-            Email,
-            Age,
-            Subscription,
-            Password: hash,
-            isAdmin: isAdmin || false ,
-        });
+            bcrypt.hash(password, 10, (err, hash) => {
+                if (err) {
+                    return res.status(500).json({ message: "Error hashing password", error: err });
+                }
 
-        // Save the user in MongoDB
-        newuser
-            .save()
-            .then((response) => {
-                res.status(201).json(response);
-                console.log("User successfully registered");
-            })
-            .catch((err) => {
-                res.status(500).json({ message: "Error saving user", error: err });
-                console.log(err);
+                const newUser = new UserModel({
+                    firstName,
+                    lastName,
+                    phone,
+                    email,
+                    age,
+                    subscription,
+                    password: hash,
+                    isAdmin: isAdmin || false,
+                });
+
+                newUser.save()
+                    .then(response => {
+                        res.status(201).json(response);
+                        console.log("User successfully registered");
+                    })
+                    .catch(err => {
+                        res.status(500).json({ message: "Error saving user", error: err });
+                        console.log(err);
+                    });
             });
-    });
+        })
+        .catch(err => res.status(500).json({ message: "Error checking user existence", error: err }));
 }
 
-export function Userlogin(req, res) {
+
+// User Login
+export function UserLogin(req, res) {
     const { email, password } = req.body;
 
     // Find user by email
-    UserModel.findOne({ Email: email })
+    UserModel.findOne({ email })
         .then(user => {
             if (!user) {
                 return res.status(404).json({ message: "User not found" });
             }
 
             // Compare password
-            bcrypt.compare(password, user.Password)
+            bcrypt.compare(password, user.password)
                 .then(isMatch => {
                     if (isMatch) {
                         // Create JWT token
                         const token = jwt.sign(
-                            { id: user._id, email: user.Email, isAdmin: user.isAdmin },
+                            { id: user._id, email: user.email, isAdmin: user.isAdmin },
                             secretKey,  // Use a secure key
                             { expiresIn: '1h' }  // Token expiration time
                         );
@@ -88,13 +97,13 @@ export function Userlogin(req, res) {
         });
 }
 
-
-export function createAdmin(req, res) {
+// Create Admin User
+export function CreateAdmin(req, res) {
     const { email, password } = req.body;
 
-    UserModel.findOne({ Email: email })
-        .then(user => {
-            if (user) {
+    UserModel.findOne({ email })
+        .then(existingUser => {
+            if (existingUser) {
                 return res.status(400).json({ message: "User already exists" });
             }
 
@@ -104,9 +113,9 @@ export function createAdmin(req, res) {
                 }
 
                 const newAdmin = new UserModel({
-                    Email: email,
-                    Password: hash,
-                    isAdmin: true // Set admin flag
+                    email,
+                    password: hash,
+                    isAdmin: true
                 });
 
                 newAdmin.save()
