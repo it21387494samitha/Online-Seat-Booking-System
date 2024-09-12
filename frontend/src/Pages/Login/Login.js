@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { auth, googleProvider } from '../../firebase';
 import { signInWithPopup } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
-import Header from '../../Component/Header';
+import { Link, useNavigate } from 'react-router-dom';
+import { FcGoogle } from 'react-icons/fc'; // Import Google icon
+import './Login.css';
 
 const adminEmails = ['dhananjayasamitha68@gmail.com'];
 
@@ -60,15 +61,15 @@ function Login() {
       {/* Overlay */}
       <div className="absolute inset-0 bg-black opacity-40"></div>
 
-      <div className="relative z-10 p-10 bg-white bg-opacity-25 rounded-2xl shadow-2xl backdrop-blur-md max-w-md w-full">
+      <div className="relative z-10 p-10 bg-white bg-opacity-25 rounded-2xl shadow-2xl backdrop-blur-md max-w-md w-full mx-4"> {/* Centering the card */}
         <h2 className="text-3xl font-semibold text-white mb-4 text-center">Welcome Back!</h2>
         <p className="text-sm text-gray-200 mb-6 text-center">Sign in to continue</p>
 
         <button
-          className="w-full flex items-center justify-center bg-white text-gray-800 py-3 px-6 rounded-lg shadow hover:bg-gray-200 transition mb-4"
+          className="w-full flex items-center justify-center bg-white text-gray-800 py-3 px-6 rounded-lg shadow-lg transition-transform hover:scale-105 mb-4"
           onClick={handleGoogleLogin}
         >
-          <img src="https://www.svgrepo.com/show/303108/google-icon-logo.svg" alt="Google icon" className="w-1 h-1 mr-3" />
+          <FcGoogle className="text-xl mr-3" /> {/* Smaller icon */}
           Sign in with Google
         </button>
 
@@ -96,8 +97,9 @@ function Login() {
         </div>
 
         <div className="mt-6 text-xs text-gray-300 text-center">
-          <p>Terms of Service | Privacy Policy</p>
+          <p>By signing in, you agree to our <span className="underline">Terms of Service</span> and <span className="underline">Privacy Policy</span>.</p>
         </div>
+        <p>If You Don't have an account</p>
       </div>
 
       {/* Decorative Circles */}
