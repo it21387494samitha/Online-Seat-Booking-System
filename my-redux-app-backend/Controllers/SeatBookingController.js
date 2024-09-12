@@ -107,3 +107,52 @@ export const CreateSeat = async (req, res) => {
         res.status(500).json({ message: 'Error creating seat', error });
     }
 };
+
+
+
+ // If you have an event model
+
+// Create seats in bulk
+export const CreateSeatStructure = async (req, res) => {
+    const { eventId, rows, columns } = req.body;
+
+    try {
+        // Check if the event exists
+        const event = await EventModel.findById(eventId);
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
+        let seats = [];
+
+        // Loop through rows and columns to generate seats
+        for (let row of rows) {
+            for (let col = 1; col <= columns; col++) {
+                const seatNumber = `${row}${col}`;
+                
+                // Check if seat already exists for this event
+                const existingSeat = await SeatModel.findOne({ seatNumber, event: eventId });
+                if (existingSeat) {
+                    return res.status(400).json({ message: `Seat ${seatNumber} already exists for this event` });
+                }
+
+                const newSeat = new SeatModel({
+                    seatNumber,
+                    row,
+                    column: col,
+                    event: eventId,
+                    isAvailable: true // Default to available
+                });
+                
+                seats.push(newSeat);
+            }
+        }
+
+        // Save all seats at once
+        await SeatModel.insertMany(seats);
+
+        res.status(201).json({ message: 'Seats created successfully', seats });
+    } catch (error) {
+        res.status(500).json({ message: 'Error creating seats', error });
+    }
+};

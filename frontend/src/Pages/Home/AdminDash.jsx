@@ -1,82 +1,93 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+// import Sidebar from '../../Component/SideBar'; 
 
 
 function AdminDash() {
   const navigate = useNavigate();
 
   return (
-
-   
     <div className="admin-dashboard">
-      <style>
-        {`
-        .admin-dashboard {
-  padding: 20px;
-  text-align: center;
-}
+      {/* Sidebar with Burger Menu */}
+      {/* <Sidebar/> */}
+      
+      <div className="main-content">
+        <style>
+          {`
+          .admin-dashboard {
+            display: flex;
+            padding: 20px;
+            min-height: 100vh;
+          }
 
-.admin-header {
-  margin-bottom: 20px;
-}
+          .main-content {
+            flex-grow: 1;
+            padding: 20px;
+          }
 
-.dashboard-cards {
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-}
+          .admin-header {
+            margin-bottom: 20px;
+            text-align: center;
+          }
 
-.card {
-  background-color: #f1f1f1;
-  padding: 20px;
-  width: 200px;
-  margin: 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease-in-out;
-}
+          .dashboard-cards {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+          }
 
-.card:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-}
+          .card {
+            background-color: #f1f1f1;
+            padding: 20px;
+            width: 200px;
+            margin: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease-in-out;
+          }
 
-.card h3 {
-  margin-bottom: 10px;
-}
+          .card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+          }
 
-.card p {
-  color: #666;
-}
+          .card h3 {
+            margin-bottom: 10px;
+          }
 
-        
-        
-        `}
-      </style>
-      <header className="admin-header">
-        <h1>Admin Dashboard</h1>
-        <p>Manage your events, users, and seat bookings from here.</p>
-      </header>
+          .card p {
+            color: #666;
+          }
+          `}
+        </style>
 
-      <div className="dashboard-cards">
-        <div className="card" onClick={() => navigate('/mevent')}>
-          <h3>Manage Events</h3>
-          <p>Create, edit, or delete events.</p>
-        </div>
+        {/* Header */}
+        <header className="admin-header">
+          <h1>Admin Dashboard</h1>
+          <p>Manage your events, users, and seat bookings from here.</p>
+        </header>
 
-        <div className="card" onClick={() => navigate('/mevent')}>  
-          <h3>Manage Users</h3>
-          <p>View and manage user accounts and permissions.</p>
-        </div>
+        {/* Dashboard Cards */}
+        <div className="dashboard-cards">
+          <div className="card" onClick={() => navigate('/mevent')}>
+            <h3>Manage Events</h3>
+            <p>Create, edit, or delete events.</p>
+          </div>
 
-        <div className="card" onClick={() => navigate('/seat-booking')}>
-          <h3>Seat Booking</h3>
-          <p>View and manage seat bookings for events.</p>
-        </div>
+          <div className="card" onClick={() => navigate('/manage-users')}>
+            <h3>Manage Users</h3>
+            <p>View and manage user accounts and permissions.</p>
+          </div>
 
-        <div className="card" onClick={() => navigate('/settings')}>
-          <h3>Settings</h3>
-          <p>Configure system settings and preferences.</p>
+          <div className="card" onClick={() => navigate('/seat-booking')}>
+            <h3>Seat Booking</h3>
+            <p>View and manage seat bookings for events.</p>
+          </div>
+
+          <div className="card" onClick={() => navigate('/settings')}>
+            <h3>Settings</h3>
+            <p>Configure system settings and preferences.</p>
+          </div>
         </div>
       </div>
     </div>

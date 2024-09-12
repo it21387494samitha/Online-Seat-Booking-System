@@ -6,6 +6,14 @@ const seatSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    row: {
+        type: String,
+        required: true
+    },
+    column: {
+        type: Number,
+        required: true
+    },
     isAvailable: {
         type: Boolean,
         default: true
@@ -17,7 +25,7 @@ const seatSchema = new mongoose.Schema({
     },
     event: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Event', // Assuming you have an Event model
+        ref: 'Event',
         required: true
     }
 });

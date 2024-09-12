@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const EventList = () => {
   const [events, setEvents] = useState([]);
   const [error, setError] = useState('');
+  const navigate = useNavigate(); // Hook to navigate to different routes
 
   // Fetch events from the backend API
   useEffect(() => {
@@ -12,8 +14,8 @@ const EventList = () => {
         const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
         const response = await axios.get('http://localhost:5000/api/events', {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
         setEvents(response.data); // Assuming data contains the array of events
       } catch (error) {
@@ -25,6 +27,11 @@ const EventList = () => {
     fetchEvents();
   }, []);
 
+  // Function to handle event click
+  const handleEventClick = (eventId) => {
+    navigate(`/booking/${eventId}`); // Navigate to the booking page with the event ID
+  };
+
   return (
     <div>
       <h2>Upcoming Events</h2>
@@ -35,7 +42,7 @@ const EventList = () => {
       ) : (
         <ul>
           {events.map((event) => (
-            <li key={event._id}>
+            <li key={event._id} onClick={() => handleEventClick(event._id)} style={{ cursor: 'pointer', marginBottom: '20px' }}>
               <h3>{event.name}</h3>
               <p>Date: {new Date(event.date).toLocaleString()}</p>
               <p>Location: {event.location}</p>

@@ -15,12 +15,19 @@ const isGoogleEmail = (email) => {
 export function RegisterUser(req, res) {
     const { firstName, lastName, phone, email, age, subscription, password, isAdmin } = req.body;
 
+    // Debug log to check request body data
+    console.log('Registering user with:', req.body);
+
     if (!firstName || !lastName || !phone || !email || !age || !password) {
         return res.status(400).json({ message: "All fields are required." });
     }
 
     if (!isGoogleEmail(email)) {
         return res.status(400).json({ message: "Please use a valid Google email (e.g., @gmail.com)." });
+    }
+
+    if (!email || typeof email !== 'string' || email.trim() === '') {
+        return res.status(400).json({ message: "Email cannot be null or empty." });
     }
 
     UserModel.findOne({ email })
@@ -51,13 +58,19 @@ export function RegisterUser(req, res) {
                         console.log("User successfully registered");
                     })
                     .catch(err => {
-                        res.status(500).json({ message: "Error saving user", error: err });
+                        if (err.code === 11000) {
+                            res.status(400).json({ message: "Duplicate email entry." });
+                        } else {
+                            res.status(500).json({ message: "Error saving user", error: err });
+                        }
                         console.log(err);
                     });
             });
         })
         .catch(err => res.status(500).json({ message: "Error checking user existence", error: err }));
 }
+
+
 
 
 // User Login
