@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardActionArea, CardMedia, Typography, Grid, Container, Alert } from '@mui/material';
 
 const EventList = () => {
   const [events, setEvents] = useState([]);
@@ -33,24 +34,54 @@ const EventList = () => {
   };
 
   return (
-    <div>
-      <h2>Upcoming Events</h2>
-      {error && <p>{error}</p>}
+
+    <div className='mt-20'>
+    <Container sx={{ mt: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Upcoming Events
+      </Typography>
+      
+      {error && <Alert severity="error">{error}</Alert>}
 
       {events.length === 0 ? (
-        <p>No events available</p>
+        <Typography variant="body1" color="textSecondary">
+          No events available
+        </Typography>
       ) : (
-        <ul>
+        <Grid container spacing={3}>
           {events.map((event) => (
-            <li key={event._id} onClick={() => handleEventClick(event._id)} style={{ cursor: 'pointer', marginBottom: '20px' }}>
-              <h3>{event.name}</h3>
-              <p>Date: {new Date(event.date).toLocaleString()}</p>
-              <p>Location: {event.location}</p>
-              <p>Description: {event.description}</p>
-            </li>
+            <Grid item xs={12} sm={6} md={4} key={event._id}>
+              <Card sx={{ boxShadow: 3, borderRadius: 2, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' } }}>
+                <CardActionArea onClick={() => handleEventClick(event._id)}>
+                  {/* Add CardMedia for image */}
+                  <CardMedia
+                    component="img"
+                    height="80"
+                    image={event.imageUrl || 'https://rainbowpages.lk/uploads/listings/logo/s/slt_digital.jpg'} // Use event image URL or a placeholder
+                    alt={event.name}
+                  />
+                  <CardContent>
+                    <Typography variant="h6" component="h3" gutterBottom sx={{ color: '#3f51b5', fontWeight: 'bold' }}>
+                      {event.name}
+                    </Typography>
+                    <Typography variant="subtitle2" color="textSecondary" sx={{ mb: 1 }}>
+                      {new Date(event.date).toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+                      <strong>Location:</strong> {event.location}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#555' }}>
+                      {event.description}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid>
           ))}
-        </ul>
+        </Grid>
       )}
+    </Container>
+
     </div>
   );
 };

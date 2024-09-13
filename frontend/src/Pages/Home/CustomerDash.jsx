@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 function CustomerDash() {
+
+  const navigate = useNavigate();
   const [bgImage, setBgImage] = useState(0);
 
   const images = [
@@ -38,7 +42,7 @@ function CustomerDash() {
             </button>
             <button
               className="bg-white bg-opacity-80 text-pink-600 px-6 py-3 rounded-full font-semibold hover:bg-opacity-100 transition-transform hover:scale-105"
-              onClick={() => console.log('Go to Booking Page')}
+              onClick={() => navigate('/list')}
             >
               Go to Booking Page
             </button>
