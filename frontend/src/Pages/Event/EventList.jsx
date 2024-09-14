@@ -6,19 +6,19 @@ import { Card, CardContent, CardActionArea, CardMedia, Typography, Grid, Contain
 const EventList = () => {
   const [events, setEvents] = useState([]);
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // Hook to navigate to different routes
+  const navigate = useNavigate(); 
 
   // Fetch events from the backend API
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
+        const token = localStorage.getItem('token'); 
         const response = await axios.get('http://localhost:5000/api/events', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setEvents(response.data); // Assuming data contains the array of events
+        setEvents(response.data); 
       } catch (error) {
         console.error('Error fetching events:', error);
         setError('Failed to fetch events.');
@@ -28,10 +28,10 @@ const EventList = () => {
     fetchEvents();
   }, []);
 
-  // Function to handle event click
+
   const handleEventClick = (eventId) => {
     navigate(`/booking/${eventId}`);
- // Navigate to the booking page with the event ID
+ 
   };
 
   return (
@@ -54,11 +54,11 @@ const EventList = () => {
             <Grid item xs={12} sm={6} md={4} key={event._id}>
               <Card sx={{ boxShadow: 3, borderRadius: 2, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' } }}>
                 <CardActionArea onClick={() => handleEventClick(event._id)} >
-                  {/* Add CardMedia for image */}
+                  
                   <CardMedia
                     component="img"
                     height="80"
-                    image={event.imageUrl || 'https://rainbowpages.lk/uploads/listings/logo/s/slt_digital.jpg'} // Use event image URL or a placeholder
+                    image={event.imageUrl || 'https://rainbowpages.lk/uploads/listings/logo/s/slt_digital.jpg'} 
                     alt={event.name}
                   />
                   <CardContent>
