@@ -2,8 +2,9 @@ import SeatModel from '../Models/SeatModel.js';
 import EventModel from '../Models/EventModel.js'; // If you have an event model
 
 // Reserve a seat
+// Reserve a seat
 export const ReserveSeat = async (req, res) => {
-    const { seatNumber, eventId } = req.body;
+    const { eventId, seatId } = req.params; // Use req.params instead of req.body
     const userId = req.user.id;
 
     try {
@@ -13,10 +14,10 @@ export const ReserveSeat = async (req, res) => {
             return res.status(404).json({ message: 'Event not found' });
         }
 
-        // Find the seat by seat number and event
-        const seat = await SeatModel.findOne({ seatNumber, event: eventId });
+        // Find the seat by seat ID and event
+        const seat = await SeatModel.findOne({ _id: seatId, event: eventId });
         if (!seat) {
-            return res.status(404).json({ message: 'Seat not found' });
+            return res.status(404).json({ message: 'Seat not found for this event' });
         }
 
         // Check if the seat is already reserved
@@ -34,6 +35,7 @@ export const ReserveSeat = async (req, res) => {
         res.status(500).json({ message: 'Error reserving seat', error });
     }
 };
+
 
 // Cancel a reservation
 export const CancelReservation = async (req, res) => {

@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post('/create', verifyToken, CreateSeat);
 // Reserve a seat (protected route)
-router.post('/reserve', verifyToken, ReserveSeat);
+router.post('/reserve/:eventId/:seatId', verifyToken, ReserveSeat);
 
 //
 router.post('/creat',verifyToken , CreateSeatStructure)
@@ -17,5 +17,5 @@ router.post('/cancel', verifyToken, CancelReservation);
 
 // View available seats for an event
 router.get('/available/:eventId', verifyToken, ViewAvailableSeats);
-
+    
 export default router;

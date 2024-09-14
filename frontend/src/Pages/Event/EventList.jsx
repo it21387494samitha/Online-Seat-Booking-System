@@ -30,7 +30,8 @@ const EventList = () => {
 
   // Function to handle event click
   const handleEventClick = (eventId) => {
-    navigate(`/booking/${eventId}`); // Navigate to the booking page with the event ID
+    navigate(`/booking/${eventId}`);
+ // Navigate to the booking page with the event ID
   };
 
   return (
@@ -52,7 +53,7 @@ const EventList = () => {
           {events.map((event) => (
             <Grid item xs={12} sm={6} md={4} key={event._id}>
               <Card sx={{ boxShadow: 3, borderRadius: 2, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' } }}>
-                <CardActionArea onClick={() => handleEventClick(event._id)}>
+                <CardActionArea onClick={() => handleEventClick(event._id)} >
                   {/* Add CardMedia for image */}
                   <CardMedia
                     component="img"
