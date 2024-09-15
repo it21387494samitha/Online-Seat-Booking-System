@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 import UserModel from "../Models/UserModel.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import multer from 'multer';
+import path from 'path';
+
+
 
 const secretKey = "samitha"; // Use a secure secret key
 
@@ -152,3 +156,65 @@ export function getAllUsers(req, res) {
             res.status(500).json({ message: "Error fetching users", error: err });
         });
 }
+
+
+
+// Fetch user profile
+export function getUserProfile(req, res) {
+    const userId = req.user.id; // Extracted from the JWT token
+
+    UserModel.findById(userId)
+        .select('-password') // Exclude password
+        .then(user => {
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
+            res.status(200).json(user);
+        })
+        .catch(err => {
+            res.status(500).json({ message: "Error fetching user", error: err });
+        });
+}
+
+
+
+
+
+
+/////////////////////////////////////////////////////
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'uploads/'); // Save images in the 'uploads' folder
+    },
+    filename: (req, file, cb) => {
+      cb(null, `${Date.now()}-${file.originalname}`); // Unique filename
+    },
+  });
+
+
+const upload = multer({ storage: storage });
+
+// Upload profile image
+export const uploadProfileImage = (req, res) => {
+  const userId = req.user.id; // Extract user ID from token
+
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
+
+  const imagePath = `/uploads/${req.file.filename}`;
+
+  // Update user with profile image path
+  UserModel.findByIdAndUpdate(
+    userId,
+    { profileImage: imagePath },
+    { new: true }
+  )
+    .then((user) => {
+      res.status(200).json({ profileImage: imagePath });
+    })
+    .catch((err) => {
+      res.status(500).json({ message: 'Error saving profile image', error: err });
+    });
+};

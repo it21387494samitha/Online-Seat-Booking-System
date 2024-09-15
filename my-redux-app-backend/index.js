@@ -6,6 +6,8 @@ import dotenv from 'dotenv'
 import userRoute from './Routers/UserRouter.js'; 
 import seatRoutes from './Routers/seatRoutes.js';
 import eventRoutes from './Routers/EventRoutes.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 
 dotenv.config();
@@ -31,6 +33,21 @@ app.use('/users',userRoute);
 app.use("/api/seats", seatRoutes);
 app.use("/api/events", eventRoutes);
 app.use('/api/events', eventRoutes);
+
+///// Get the current file path
+const __filename = fileURLToPath(import.meta.url);
+
+// Get the directory name
+const __dirname = path.dirname(__filename);
+
+// Now you can use __dirname as usual
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
+
+
+
+
 
 // Start the Server
 app.listen(PORT, () => {

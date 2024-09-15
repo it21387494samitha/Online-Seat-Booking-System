@@ -1,8 +1,10 @@
 import express from 'express';
 import { verifyToken } from '../Middleware/VerifyToken.js'; 
-import { getAllUsers, RegisterUser, UserLogin} from '../Controllers/UserController.js'; 
+import { getAllUsers, getUserProfile, RegisterUser, uploadProfileImage, UserLogin} from '../Controllers/UserController.js'; 
+import multer from 'multer';
 
 const router = express.Router();
+const upload = multer({ dest: 'uploads/' });
 
 // Public routes
 router.post('/register', RegisterUser); 
@@ -13,11 +15,9 @@ router.get('/all',getAllUsers);
 
 
 // Protected routes
-router.get('/profile', verifyToken, (req, res) => {
-    
-    res.json({ message: "This is a protected profile route", user: req.user });
-});
+router.get('/profile', verifyToken, getUserProfile );
 
+router.post('/upload-profile-image', verifyToken, upload.single('profileImage'), uploadProfileImage);
 
 router.get('/settings', verifyToken, (req, res) => {
     res.json({ message: "Access to settings", user: req.user });
