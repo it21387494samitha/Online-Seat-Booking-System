@@ -1,12 +1,14 @@
 import express from 'express';
 import { verifyToken } from '../Middleware/VerifyToken.js'; 
-import { RegisterUser, UserLogin} from '../Controllers/UserController.js'; 
+import { getAllUsers, RegisterUser, UserLogin} from '../Controllers/UserController.js'; 
 
 const router = express.Router();
 
 // Public routes
 router.post('/register', RegisterUser); 
 router.post('/login', UserLogin);     
+
+router.get('/all',getAllUsers);
 
 
 

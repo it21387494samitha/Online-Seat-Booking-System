@@ -1,34 +1,55 @@
-.header {
-  background-color: #333;
+/* General Header Styles */
+header {
+  background: linear-gradient(to right, #34d399, #60a5fa, #9d4edd); /* Gradient background */
   color: white;
   padding: 10px 20px;
-  display: flex;
-  margin-top: 15px;
-  justify-content: space-between;
-  align-items: center;
-  
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.logo h1 {
-  margin: 0;
-}
-
-.nav-links {
-  list-style: none;
+header .nav-links {
   display: flex;
   gap: 20px;
 }
 
-.nav-links li {
-  display: inline;
-}
-
-.nav-links a {
-  color: white;
+header .nav-links a {
   text-decoration: none;
-  font-size: 1.1rem;
+  color: white;
+  font-size: 1rem;
+  transition: color 0.3s ease;
 }
 
-.nav-links a:hover {
-  text-decoration: underline;
+header .nav-links a:hover {
+  color: #fbbf24; /* Yellow hover color */
+}
+
+.search-bar {
+  position: relative;
+}
+
+.search-bar input {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: none;
+}
+
+.search-bar svg {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Mobile Menu */
+.mobile-menu {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+  
+  .mobile-menu {
+    display: flex;
+  }
 }

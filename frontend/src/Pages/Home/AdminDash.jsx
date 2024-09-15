@@ -1,8 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function AdminDash() {
+  const [eventCount, setEventCount] = useState(0); // State to hold the event count
+  const [userCount, setUserCount] = useState(0); // State to hold the user count
+  const [bookingCount, setBookingCount] = useState(0); // State to hold the booking count
+
   const navigate = useNavigate();
+
+  // Fetch event, user, and booking counts from your API
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        // Fetch Events
+        const eventsResponse = await fetch('http://localhost:5000/api/events/all');
+        if (!eventsResponse.ok) throw new Error(`HTTP error! Status: ${eventsResponse.status}`);
+        const eventsData = await eventsResponse.json();
+        if (Array.isArray(eventsData)) {
+          setEventCount(eventsData.length); // Count events
+        }
+
+        // Fetch Users
+        const usersResponse = await fetch('http://localhost:5000/users/all');
+        if (!usersResponse.ok) throw new Error(`HTTP error! Status: ${usersResponse.status}`);
+        const usersData = await usersResponse.json();
+        if (Array.isArray(usersData)) {
+          setUserCount(usersData.length); // Count users
+        }
+
+        // Fetch Bookings
+        const bookingsResponse = await fetch('http://localhost:5000/api/seats/event/yourEventId/booked-seats-count');
+        if (!bookingsResponse.ok) throw new Error(`HTTP error! Status: ${bookingsResponse.status}`);
+        const bookingsData = await bookingsResponse.json();
+        if (Array.isArray(bookingsData)) {
+          setBookingCount(bookingsData.length); // Count bookings
+        }
+
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -21,22 +61,22 @@ function AdminDash() {
         <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-2xl font-bold text-gray-800 mb-2">Total Events</h3>
-            <p className="text-4xl font-extrabold text-blue-500">45</p>
+            <p className="text-4xl font-extrabold text-blue-500">{eventCount}</p> {/* Dynamic event count */}
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-2xl font-bold text-gray-800 mb-2">Total Users</h3>
-            <p className="text-4xl font-extrabold text-green-500">120</p>
+            <p className="text-4xl font-extrabold text-green-500">{userCount}</p> {/* Dynamic user count */}
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-2xl font-bold text-gray-800 mb-2">Bookings</h3>
-            <p className="text-4xl font-extrabold text-yellow-500">300</p>
+            <p className="text-4xl font-extrabold text-yellow-500">{bookingCount}</p> {/* Dynamic booking count */}
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-2xl font-bold text-gray-800 mb-2">Revenue</h3>
-            <p className="text-4xl font-extrabold text-red-500">$5,000</p>
+            <p className="text-4xl font-extrabold text-red-500">$</p> {/* Dynamic revenue */}
           </div>
         </div>
 
@@ -47,7 +87,7 @@ function AdminDash() {
             onClick={() => navigate('/event')}
           >
             <h3 className="text-xl font-semibold mb-2 text-gray-800">Manage Events</h3>
-            <p className="text-gray-500">Create, edit, or delete events.</p>
+            <p className="text-gray-500">Create New events.</p>
           </div>
 
           <div

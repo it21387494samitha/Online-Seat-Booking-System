@@ -4,6 +4,7 @@ import { auth, googleProvider } from '../../firebase';
 import { signInWithPopup } from 'firebase/auth';
 import { Link, useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc'; // Import Google icon
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Icons for password toggle
 import './Login.css';
 
 const adminEmails = ['dhananjayasamitha68@gmail.com'];
@@ -11,9 +12,12 @@ const adminEmails = ['dhananjayasamitha68@gmail.com'];
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false); // Password toggle state
   const navigate = useNavigate();
 
   const handleGoogleLogin = () => {
+    setLoading(true);
     signInWithPopup(auth, googleProvider)
       .then((result) => {
         const user = result.user;
@@ -30,10 +34,17 @@ function Login() {
       .catch((error) => {
         console.error('Error during Google login:', error);
         alert('Login failed. Please try again.');
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   const handleEmailLogin = () => {
+    if (!email || !password) {
+      alert('Please enter both email and password.');
+      return;
+    }
+
+    setLoading(true);
     axios.post('http://localhost:5000/users/login', { email, password })
       .then((response) => {
         const { token } = response.data;
@@ -52,8 +63,9 @@ function Login() {
       })
       .catch((error) => {
         console.error('Error during email login:', error);
-        alert('Login failed. Please try again.');
-      });
+        alert('Login failed. Incorrect email or password.');
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -61,16 +73,21 @@ function Login() {
       {/* Overlay */}
       <div className="absolute inset-0 bg-black opacity-40"></div>
 
-      <div className="relative z-10 p-10 bg-white bg-opacity-25 rounded-2xl shadow-2xl backdrop-blur-md max-w-md w-full mx-4"> {/* Centering the card */}
+      <div className="relative z-10 p-10 bg-white bg-opacity-25 rounded-2xl shadow-2xl backdrop-blur-md max-w-md w-full mx-4">
         <h2 className="text-3xl font-semibold text-white mb-4 text-center">Welcome Back!</h2>
         <p className="text-sm text-gray-200 mb-6 text-center">Sign in to continue</p>
 
         <button
-          className="w-full flex items-center justify-center bg-white text-gray-800 py-3 px-6 rounded-lg shadow-lg transition-transform hover:scale-105 mb-4"
+          className={`w-full flex items-center justify-center bg-white text-gray-800 py-3 px-6 rounded-lg shadow-lg transition-transform hover:scale-105 mb-4 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
           onClick={handleGoogleLogin}
+          disabled={loading}
         >
-          <FcGoogle className="text-xl mr-3" /> {/* Smaller icon */}
-          Sign in with Google
+          {loading ? 'Signing in...' : (
+            <>
+              <FcGoogle className="text-xl mr-3" />
+              Sign in with Google
+            </>
+          )}
         </button>
 
         <div className="space-y-4">
@@ -80,26 +97,42 @@ function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full p-3 bg-white bg-opacity-10 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 placeholder-gray-300"
+            required
           />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 bg-white bg-opacity-10 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 placeholder-gray-300"
-          />
+
+          <div className="relative">
+            <input
+              type={passwordVisible ? 'text' : 'password'}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-3 bg-white bg-opacity-10 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 placeholder-gray-300"
+              required
+            />
+            <div
+              className="absolute inset-y-0 right-4 flex items-center cursor-pointer"
+              onClick={() => setPasswordVisible(!passwordVisible)}
+            >
+              {passwordVisible ? <FaEyeSlash className="text-white" /> : <FaEye className="text-white" />}
+            </div>
+          </div>
+
           <button
-            className="w-full py-3 px-6 bg-pink-600 text-white rounded-lg shadow-lg hover:bg-pink-700 transition"
+            className={`w-full py-3 px-6 bg-pink-600 text-white rounded-lg shadow-lg hover:bg-pink-700 transition ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={handleEmailLogin}
+            disabled={loading}
           >
-            Sign in with Email
+            {loading ? 'Signing in...' : 'Sign in with Email'}
           </button>
         </div>
 
         <div className="mt-6 text-xs text-gray-300 text-center">
-          <p>By signing in, you agree to our <span className="underline">Terms of Service</span> and <span className="underline">Privacy Policy</span>.</p>
+          <p>By signing in, you agree to our <span className="underline hover:text-pink-500 cursor-pointer">Terms of Service</span> and <span className="underline hover:text-pink-500 cursor-pointer">Privacy Policy</span>.</p>
         </div>
-        <p>If You Don't have an account</p>
+
+        <div className="mt-4 text-center">
+          <p className="text-gray-200">Don't have an account? <Link to="/signup" className="text-pink-500 hover:underline">Sign Up</Link></p>
+        </div>
       </div>
 
       {/* Decorative Circles */}

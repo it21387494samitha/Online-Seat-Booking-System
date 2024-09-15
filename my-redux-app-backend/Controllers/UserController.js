@@ -138,3 +138,17 @@ export function CreateAdmin(req, res) {
         })
         .catch(err => res.status(500).json({ message: "Error finding user", error: err }));
 }
+
+
+
+
+// Fetch all users
+export function getAllUsers(req, res) {
+    UserModel.find({})
+        .then(users => {
+            res.status(200).json(users); // Return all users
+        })
+        .catch(err => {
+            res.status(500).json({ message: "Error fetching users", error: err });
+        });
+}

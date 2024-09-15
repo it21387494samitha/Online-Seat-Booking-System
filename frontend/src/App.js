@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Register from '../src/Pages/Login/RegisterPage';
 import Login from '../src/Pages/Login/Login';
@@ -9,17 +9,27 @@ import AdminSeatManagement from './Admin/SeatAdd';
 import ManageEvents from './Admin/ManageEvents';
 import EventForm from './Admin/EventForm';
 import EventList from './Pages/Event/EventList';
+import Header from './Component/Header'; // Adjusted import
+import './app.css';
 import Sidebar from './Component/SideBar';
-import Header from './Component/Header';
 
 function App() {
+  // Manage sidebar open/collapse state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <Router>
-      <div className="App">
-        <Sidebar />
+      
+        {/* Pass sidebar state and toggle function to Header */}
         <Header />
 
-        <div className="main-content">
+        <Sidebar /> {/* Pass isOpen to Sidebar */}
+        
+        <div className={`main-content }`}> 
           <Routes>
             {/* Admin Routes */}
             <Route path="/event" element={<EventForm />} />
@@ -35,10 +45,9 @@ function App() {
 
             {/* Booking Route */}
             <Route path="/booking/:eventId" element={<SeatBooking />} />
-
           </Routes>
         </div>
-      </div>
+     
     </Router>
   );
 }
