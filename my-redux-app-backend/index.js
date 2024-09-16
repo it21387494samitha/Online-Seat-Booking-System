@@ -35,16 +35,21 @@ app.use("/api/events", eventRoutes);
 app.use('/api/events', eventRoutes);
 
 ///// Get the current file path
-const __filename = fileURLToPath(import.meta.url);
+app.get('/users/profile/image/:id', async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.params.id);
 
-// Get the directory name
-const __dirname = path.dirname(__filename);
+    if (!user || !user.profileImage) {
+      return res.status(404).json({ message: 'Image not found' });
+    }
 
-// Now you can use __dirname as usual
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-
-
+    // Set the content type and send the image buffer
+    res.contentType(user.profileImage.contentType);
+    res.send(user.profileImage.data);
+  } catch (err) {
+    res.status(500).json({ message: 'Error retrieving image', error: err });
+  }
+});
 
 
 

@@ -3,11 +3,17 @@ import UserModel from "../Models/UserModel.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import multer from 'multer';
+import fs from 'fs';
 import path from 'path';
 
 
 
+
 const secretKey = "samitha"; // Use a secure secret key
+
+
+const storage = multer.memoryStorage(); // Store the image in memory as a buffer
+const upload = multer({ storage: storage }); // Use memory storage for multer
 
 // Helper function to validate Google email
 const isGoogleEmail = (email) => {
@@ -183,38 +189,30 @@ export function getUserProfile(req, res) {
 
 /////////////////////////////////////////////////////
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, 'uploads/'); // Save images in the 'uploads' folder
-    },
-    filename: (req, file, cb) => {
-      cb(null, `${Date.now()}-${file.originalname}`); // Unique filename
-    },
-  });
+// Route to update user profile image
 
 
-const upload = multer({ storage: storage });
 
-// Upload profile image
-export const uploadProfileImage = (req, res) => {
-  const userId = req.user.id; // Extract user ID from token
-
-  if (!req.file) {
-    return res.status(400).json({ message: 'No file uploaded' });
-  }
-
-  const imagePath = `/uploads/${req.file.filename}`;
-
-  // Update user with profile image path
-  UserModel.findByIdAndUpdate(
-    userId,
-    { profileImage: imagePath },
-    { new: true }
-  )
-    .then((user) => {
-      res.status(200).json({ profileImage: imagePath });
-    })
-    .catch((err) => {
-      res.status(500).json({ message: 'Error saving profile image', error: err });
-    });
-};
+export const uploadProfileImage = async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const user = await UserModel.findById(userId);
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // Save image data
+      user.profileImage = {
+        data: fs.readFileSync(path.join(__dirname, '../uploads/' + req.file.filename)),
+        contentType: req.file.mimetype,
+      };
+  
+      await user.save();
+  
+      res.json({ message: 'Profile image uploaded successfully.' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Failed to upload image.' });
+    }
+  };

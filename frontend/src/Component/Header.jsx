@@ -75,7 +75,7 @@ const Header = ({ toggleSidebar, isOpen, isDarkMode, toggleTheme }) => {
             <a href="/login" className="block px-4 py-2 bg-pink-600 text-white rounded-lg text-center hover:bg-pink-700 transition">
               Login
             </a>
-            <a href="/signup" className="block px-4 py-2 bg-yellow-500 text-white rounded-lg text-center hover:bg-yellow-600 transition mt-2">
+            <a href="/register" className="block px-4 py-2 bg-yellow-500 text-white rounded-lg text-center hover:bg-yellow-600 transition mt-2">
               Sign Up
             </a>
           </div>

@@ -34,7 +34,12 @@ const userSchema = new mongoose.Schema({
     isAdmin: { 
         type: Boolean, 
         default: false 
-    }
+    },
+
+    profileImage: {
+        data: Buffer,      // Stores image data as a buffer
+        contentType: String // Stores image file type (e.g., 'image/jpeg', 'image/png')
+      },
 });
 
  const UserModel= mongoose.model("User", userSchema);

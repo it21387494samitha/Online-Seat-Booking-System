@@ -17,7 +17,7 @@ router.get('/all',getAllUsers);
 // Protected routes
 router.get('/profile', verifyToken, getUserProfile );
 
-router.post('/upload-profile-image', verifyToken, upload.single('profileImage'), uploadProfileImage);
+router.post('/profile/upload', verifyToken, upload.single('profileImage'), uploadProfileImage);
 
 router.get('/settings', verifyToken, (req, res) => {
     res.json({ message: "Access to settings", user: req.user });
