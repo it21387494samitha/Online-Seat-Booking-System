@@ -1,160 +1,151 @@
-/* General Body Styling */
-body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f7f9fc;
-    color: #333;
-    transition: background-color 0.5s, color 0.5s;
-}
+/* General Styles */
 
-/* Centering the Profile Container */
 .profile-container {
-    max-width: 1000px;
-    padding: 40px;
-    background: #f7f9fc;
-    margin: 50px auto;
-    border-radius: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-}
-
-/* Profile Header */
-.profile-header {
-    width: 100%;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    margin-bottom: 30px;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
-}
-
-/* Profile Cover Photo */
-.cover-photo {
-    background-image: url('');
-    height: 200px;
+    padding: 2rem;
     background-size: cover;
-    background-position: center;
-    border-radius: 10px 10px 0 0;
+    background-repeat: no-repeat;
+    background-image:url('https://png.pngtree.com/thumb_back/fh260/back_our/20190619/ourmid/pngtree-company-profile-corporate-culture-exhibition-board-display-poster-material-image_131622.jpg');
+    min-height: 97vh;
+    
 }
 
-/* Profile Image */
-.profile-image img {
-    border: 5px solid #eef2f7;
-    border-radius: 50%;
-    max-width: 150px;
-    display: block;
-    margin: -75px auto 20px;
-    transition: all 0.3s ease;
-}
-
-.profile-image img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-}
-
-/* Profile Details */
-.user-details {
-    margin-top: 20px;
+/* Profile Card Styling */
+.profile-card {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 2.5rem;
+    max-width: 500px;
+    width: 100%;
     text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+    margin-top: 30px;
+}
+
+.profile-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Profile Image Styling */
+.profile-image img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    border: 3px solid #46ff6b;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin-left: 130px;
+    
+}
+
+/* User Details Styling */
+.user-details h3 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
 }
 
 .user-details p {
     font-size: 16px;
     color: #666;
     margin: 10px 0;
-}
-
-.icon {
-    margin-right: 10px;
-}
-
-/* Profile Completion */
-.profile-completion {
-    margin: 20px 0;
-    width: 80%;
-    text-align: center;
-}
-
-.completion-bar {
-    width: 100%;
-    background-color: #ddd;
-    border-radius: 20px;
-    overflow: hidden;
-}
-
-.completion-bar-fill {
-    height: 8px;
-    background-color: #4CAF50;
-    width: 0;
-    transition: width 0.5s ease;
-}
-
-/* Edit Profile Button */
-.edit-profile-button {
-    background-color: #007bff;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    margin-top: 15px;
-    display: inline-flex;
+    display: flex;
     align-items: center;
+    justify-content: center;
+}
+
+.user-details p svg {
+    margin-right: 8px;
+    color: #466bff;
+}
+
+/* Subscription Status Styling */
+.subscription-status {
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.subscription-status.active {
+    color: #28a745;
+}
+
+.subscription-status.inactive {
+    color: #dc3545;
+}
+
+/* Dark Mode Button Styling */
+.dark-mode-toggle {
+    background-color: #466bff;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 30px;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 14px;
+}
+
+.dark-mode-toggle svg {
+    margin-right: 8px;
+    margin-bottom: 20px;
+}
+
+.dark-mode-toggle:hover {
+    background-color: #6e7eff;
+    transform: translateY(-3px);
+}
+
+/* Edit Profile Button Styling */
+.edit-profile-button {
+    background-color: #466bff;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 30px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .edit-profile-button:hover {
-    background-color: #0056b3;
+    background-color: #6e7eff;
+    transform: translateY(-3px);
 }
 
-/* User Activity */
-.user-activity {
-    width: 100%;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    margin-top: 30px;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
-}
+/* Responsive Styling */
+@media (max-width: 768px) {
+    .profile-card {
+        padding: 1.5rem;
+    }
 
-.user-activity ul {
-    list-style: none;
-    padding: 0;
-}
+    .profile-image img {
+        width: 120px;
+        height: 120px;
+    }
 
-.user-activity ul li {
-    padding: 10px 0;
-    font-size: 14px;
-    color: #666;
-}
+    .user-details h3 {
+        font-size: 20px;
+    }
 
-/* Dark Mode */
-body.dark-mode {
-    background-color: #2c2c2c;
-    color: #f7f9fc;
-}
+    .user-details p {
+        font-size: 14px;
+    }
 
-.dark-mode .profile-container {
-    background-color: #3b3b3b;
-}
+    .dark-mode-toggle {
+        font-size: 12px;
+        padding: 10px 18px;
+    }
 
-.dark-mode .profile-header {
-    background-color: #444;
-    color: #f7f9fc;
-}
-
-.dark-mode .completion-bar-fill {
-    background-color: #5cb85c;
-}
-
-.dark-mode .edit-profile-button {
-    background-color: #0056b3;
-}
-
-.dark-mode .user-activity {
-    background-color: #444;
+    .edit-profile-button {
+        font-size: 14px;
+        padding: 10px 18px;
+    }
 }

@@ -14,6 +14,7 @@ import './app.css';
 import Sidebar from './Component/SideBar';
 import Profile from './User/UserProfile';
 import ProfileImageUpload from './User/ProfileImageUpload';
+import BookingHistory from './Pages/History/BookingHistory';
 
 function App() {
   // Manage sidebar open/collapse state
@@ -49,6 +50,7 @@ function App() {
             <Route path="/booking/:eventId" element={<SeatBooking />} />
             <Route path='/profile' element={<Profile/>} />
             <Route path='/p' element={<ProfileImageUpload/>} />
+            <Route path='/history' element={<BookingHistory/>} />
             
           </Routes>
         </div>

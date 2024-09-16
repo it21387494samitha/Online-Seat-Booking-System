@@ -48,7 +48,7 @@ const Sidebar = () => {
 
             {/* Event List */}
             <li>
-              <Link to="/events">
+              <Link to="/list">
                 <FontAwesomeIcon icon={faList} />
                 {isOpen && <span>Event List</span>}
               </Link>

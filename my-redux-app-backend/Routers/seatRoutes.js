@@ -1,6 +1,6 @@
 import express from 'express';
 import { verifyToken } from '../Middleware/VerifyToken.js';
-import { ReserveSeat, CancelReservation, ViewAvailableSeats, CreateSeat, CreateSeatStructure, GetBookedSeatCount } from '../Controllers/SeatBookingController.js';
+import { ReserveSeat, CancelReservation, ViewAvailableSeats, CreateSeat, CreateSeatStructure, GetBookedSeatCount, GetBookingHistory, deleteBooking } from '../Controllers/SeatBookingController.js';
 
 const router = express.Router();
 
@@ -20,5 +20,13 @@ router.post('/cancel', verifyToken, CancelReservation);
 
 // View available seats for an event
 router.get('/available/:eventId', verifyToken, ViewAvailableSeats);
+
+// SeatBookingRouter.js
+router.get('/history', verifyToken, GetBookingHistory);
+
+// Delete a booking by ID (protected route)
+router.delete('/history/:id', verifyToken, deleteBooking); 
+
+
     
 export default router;

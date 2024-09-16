@@ -170,3 +170,48 @@ export const GetBookedSeatCount = async (req, res) => {
         res.status(500).json({ message: 'Error fetching booked seat count', error });
     }
 };
+
+
+
+// SeatBookingController.js
+export const GetBookingHistory = async (req, res) => {
+    const userId = req.user.id; // Get the user's ID from the token
+
+    try {
+        // Find all seats reserved by this user
+        const bookings = await SeatModel.find({ reservedBy: userId })
+            .populate('event', 'name date') // Optionally populate event details
+            .select('seatNumber event'); // Select fields to return
+
+        if (!bookings.length) {
+            return res.status(404).json({ message: 'No booking history found' });
+        }
+
+        res.status(200).json(bookings);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching booking history', error });
+    }
+};
+
+
+
+export const deleteBooking = async (req, res) => {
+    try {
+      const bookingId = req.params.id;  // Get booking ID from URL parameters
+      const seat = await SeatModel.findById(bookingId);
+  
+      if (!seat) {
+        return res.status(404).json({ message: 'Seat reservation not found' });
+      }
+  
+      // Reset the reservation status
+      seat.isAvailable = true;
+      seat.reservedBy = null;  // Clear the user who reserved it
+      await seat.save();  // Save the changes to the seat document
+  
+      res.status(200).json({ message: 'Booking deleted successfully' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
