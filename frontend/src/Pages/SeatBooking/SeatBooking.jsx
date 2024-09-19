@@ -66,7 +66,7 @@ const SeatBooking = () => {
         }
       );
 
-      setSuccess(`Seat ${response.data.seat.seatNumber} reserved successfully!`);
+      
       setError('');
       setConfirmReservation(false);
     } catch (error) {

@@ -2,6 +2,7 @@ import SeatModel from '../Models/SeatModel.js';
 import EventModel from '../Models/EventModel.js'; // If you have an event model
 
 
+
 export const ReserveSeat = async (req, res) => {
     const { eventId, seatId } = req.params; // Use req.params instead of req.body
     const userId = req.user.id;
@@ -28,6 +29,9 @@ export const ReserveSeat = async (req, res) => {
         seat.isAvailable = false;
         seat.reservedBy = userId;
         await seat.save();
+        
+
+
 
         res.status(200).json({ message: 'Seat reserved successfully', seat });
     } catch (error) {

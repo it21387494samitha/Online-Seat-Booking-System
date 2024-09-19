@@ -6,6 +6,7 @@ import dotenv from 'dotenv'
 import userRoute from './Routers/UserRouter.js'; 
 import seatRoutes from './Routers/seatRoutes.js';
 import eventRoutes from './Routers/EventRoutes.js';
+import settingRoutes from './Routers/SettingRoute.js'
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -33,6 +34,7 @@ app.use('/users',userRoute);
 app.use("/api/seats", seatRoutes);
 app.use("/api/events", eventRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api',settingRoutes )
 
 ///// Get the current file path
 app.get('/users/profile/image/:id', async (req, res) => {

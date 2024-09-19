@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SideBar from './SideBar'; // Importing SideBar component
-import Logo from '../Assest/SLT_logo.png'; // Path to your logo image
-import { FaSearch, FaBars, FaHome, FaInfoCircle, FaServicestack, FaEnvelope, FaUser } from 'react-icons/fa'; // Icons for nav
+import SideBar from './SideBar'; 
+import Logo from '../Assest/SLT_logo.png'; 
+import { FaSearch, FaBars, FaHome, FaInfoCircle, FaServicestack, FaEnvelope, FaUser } from 'react-icons/fa'; 
 
 const Header = ({ toggleSidebar, isOpen, isDarkMode, toggleTheme }) => {
   const navigate = useNavigate();
@@ -17,13 +17,13 @@ const Header = ({ toggleSidebar, isOpen, isDarkMode, toggleTheme }) => {
       <header className={`bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 shadow-lg fixed top-0 w-full z-50 flex items-center justify-between px-8 py-4`}>
         {/* Logo and Title */}
         <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/')}>
-          <img src={Logo} alt="Logo" className="w-14 h-14 object-contain ml-5" /> {/* Logo */}
+          <img src={Logo} alt="Logo" className="w-14 h-14 object-contain ml-5" /> 
           <div className="text-3xl font-bold text-white ml-5">
             Online Reservation
           </div>
         </div>
 
-        {/* Navigation Links & Search Bar */}
+        
         <nav className="hidden md:flex items-center space-x-8 text-lg font-medium text-white">
           <a href="/" className="hover:text-yellow-300 flex items-center space-x-1 transition-colors">
             <FaHome /> <span>Home</span>
@@ -38,7 +38,7 @@ const Header = ({ toggleSidebar, isOpen, isDarkMode, toggleTheme }) => {
             <FaEnvelope /> <span>Contact</span>
           </a>
 
-          {/* Search Bar */}
+          
           <div className="relative">
             <input
               type="text"
@@ -48,8 +48,8 @@ const Header = ({ toggleSidebar, isOpen, isDarkMode, toggleTheme }) => {
             <FaSearch className="absolute top-3 right-3 text-gray-600" />
           </div>
 
-          {/* Call to Action Button */}
-          <a href="/signup" className="bg-yellow-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-yellow-600 transition">
+          
+          <a href="/register" className="bg-yellow-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-yellow-600 transition">
             Sign Up
           </a>
 

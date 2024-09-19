@@ -58,7 +58,7 @@ function AdminDash() {
         </header>
 
         {/* Statistics and Activities */}
-        <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 " onClick={()=> navigate('/')}>
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-2xl font-bold text-gray-800 mb-2">Total Events</h3>
             <p className="text-4xl font-extrabold text-blue-500">{eventCount}</p> {/* Dynamic event count */}
