@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   Box,
@@ -11,6 +11,10 @@ import {
   DialogContent,
   DialogActions,
   Alert,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 
 const EventForm = () => {
@@ -28,13 +32,49 @@ const EventForm = () => {
     rows: '',
     columns: '',
   });
+  const [minDate, setMinDate] = useState('');
+  const [maxDate, setMaxDate] = useState('');
+
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+  // Calculate the current week's Monday and Sunday
+  const calculateCurrentWeek = () => {
+    const currentDate = new Date();
+    const dayOfWeek = currentDate.getDay(); // Get current day (0 - Sunday, 1 - Monday, etc.)
+    
+    const diffToMonday = currentDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1);
+    const startOfWeek = new Date(currentDate.setDate(diffToMonday)); // Monday
+    const endOfWeek = new Date(currentDate.setDate(startOfWeek.getDate() + 6)); // Sunday
+
+    const formatDate = (date) => date.toISOString().split('T')[0]; // YYYY-MM-DD format
+    setMinDate(formatDate(startOfWeek));
+    setMaxDate(formatDate(endOfWeek));
+  };
+
+  // UseEffect to calculate the week range on component mount
+  useEffect(() => {
+    calculateCurrentWeek();
+  }, []);
 
   // Handle form field changes for the event
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    if (name === 'date') {
+      const selectedDate = new Date(value);
+      const selectedDay = selectedDate.getDay(); // Get day of the week (0 - Sunday to 6 - Saturday)
+      const correspondingDay = daysOfWeek[selectedDay === 0 ? 6 : selectedDay - 1]; // Adjust Sunday (0) to the end of array
+      setFormData({
+        ...formData,
+        date: value,
+        name: correspondingDay, // Set the name field automatically
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   // Handle form field changes for the seat structure
@@ -105,100 +145,113 @@ const EventForm = () => {
 
   return (
     <div className='mt-14 '>
-    <Box sx={{ padding: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Create Event
-      </Typography>
-      {message && <Alert severity="info">{message}</Alert>}
-      <form onSubmit={handleSubmit}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
-            <TextField
-              label="Event Name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              fullWidth
-              required
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              label="Event Date"
-              name="date"
-              type="datetime-local"
-              value={formData.date}
-              onChange={handleChange}
-              fullWidth
-              required
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              label="Location"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              fullWidth
-              required
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              label="Description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              fullWidth
-              multiline
-              rows={4}
-            />
-          </Grid>
-        </Grid>
-        <Button type="submit" variant="contained" color="primary" sx={{ mt: 3 }}>
+      <Box sx={{ padding: 3 }}>
+        <Typography variant="h4" gutterBottom>
           Create Event
-        </Button>
-      </form>
-     
-      {/* Modal for adding seats */}
-      <Dialog open={modalIsOpen} onClose={() => setModalIsOpen(false)}>
-        <DialogTitle>Add Seats</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
+        </Typography>
+        {message && <Alert severity="info">{message}</Alert>}
+        <form onSubmit={handleSubmit}>
+          <Grid container spacing={3}>
+            {/* Weekday Dropdown */}
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth required>
+                <InputLabel>Day of Week</InputLabel>
+                <Select
+                  label="Day of Week"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                >
+                  {daysOfWeek.map((day) => (
+                    <MenuItem key={day} value={day}>
+                      {day}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
               <TextField
-                label="Rows (comma-separated, e.g., A,B,C)"
-                name="rows"
-                value={seatData.rows}
-                onChange={handleSeatChange}
+                label="Event Date"
+                name="date"
+                type="date"
+                value={formData.date}
+                onChange={handleChange}
+                fullWidth
+                required
+                InputLabelProps={{ shrink: true }}
+                inputProps={{
+                  min: minDate,
+                  max: maxDate,
+                }} // Enforce date range restrictions
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                label="Location"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
                 fullWidth
                 required
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                label="Columns per row"
-                name="columns"
-                type="number"
-                value={seatData.columns}
-                onChange={handleSeatChange}
+                label="Description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
                 fullWidth
-                required
+                multiline
+                rows={4}
               />
             </Grid>
           </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleSeatSubmit} variant="contained" color="primary">
-            Add Seats
+          <Button type="submit" variant="contained" color="primary" sx={{ mt: 3 }}>
+            Create Event
           </Button>
-          <Button onClick={() => setModalIsOpen(false)} color="secondary">
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+        </form>
+
+        {/* Modal for adding seats */}
+        <Dialog open={modalIsOpen} onClose={() => setModalIsOpen(false)}>
+          <DialogTitle>Add Seats</DialogTitle>
+          <DialogContent>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  label="Rows (comma-separated, e.g., A,B,C)"
+                  name="rows"
+                  value={seatData.rows}
+                  onChange={handleSeatChange}
+                  fullWidth
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Columns per row"
+                  name="columns"
+                  type="number"
+                  value={seatData.columns}
+                  onChange={handleSeatChange}
+                  fullWidth
+                  required
+                />
+              </Grid>
+            </Grid>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleSeatSubmit} variant="contained" color="primary">
+              Add Seats
+            </Button>
+            <Button onClick={() => setModalIsOpen(false)} color="secondary">
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Box>
     </div>
   );
 };

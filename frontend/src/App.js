@@ -16,6 +16,9 @@ import Profile from './User/UserProfile';
 import ProfileImageUpload from './User/ProfileImageUpload';
 import BookingHistory from './Pages/History/BookingHistory';
 import Settings from './Pages/Setting/Setting';
+import AdminSeatBooking from './Admin/AdminSeatBooking';
+import ManageUsers from './Admin/ManageUsers';
+
 
 function App() {
   // Manage sidebar open/collapse state
@@ -39,6 +42,8 @@ function App() {
             <Route path="/event" element={<EventForm />} />
             <Route path="/admin" element={<AdminDash />} />
             <Route path="/ad" element={<AdminSeatManagement />} />
+            <Route path="/allseat" element={<AdminSeatBooking />} />
+            <Route path="/manage-users"  element={<ManageUsers/>} />
 
             {/* Customer Routes */}
             <Route path="/register" element={<Register />} />

@@ -10,7 +10,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Example: Check if token is present in localStorage to determine login status
+    
     const token = localStorage.getItem('token');
     if (token) {
       setIsLoggedIn(true);

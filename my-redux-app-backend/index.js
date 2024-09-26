@@ -33,7 +33,7 @@ app.use('/users',userRoute);
 
 app.use("/api/seats", seatRoutes);
 app.use("/api/events", eventRoutes);
-app.use('/api/events', eventRoutes);
+
 app.use('/api',settingRoutes )
 
 ///// Get the current file path

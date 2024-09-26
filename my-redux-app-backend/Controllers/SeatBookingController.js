@@ -1,5 +1,7 @@
 import SeatModel from '../Models/SeatModel.js';
-import EventModel from '../Models/EventModel.js'; // If you have an event model
+import EventModel from '../Models/EventModel.js';
+
+// If you have an event model
 
 
 
@@ -8,7 +10,7 @@ export const ReserveSeat = async (req, res) => {
     const userId = req.user.id;
 
     try {
-        // Check if the event exists
+       
         const event = await EventModel.findById(eventId);
         if (!event) {
             return res.status(404).json({ message: 'Event not found' });
@@ -219,3 +221,40 @@ export const deleteBooking = async (req, res) => {
       res.status(500).json({ message: 'Server error' });
     }
   };
+
+
+  // Get all seats for an event (admin route)
+  export const ViewAllSeats = async (req, res) => {
+    try {
+        // Populating 'firstName' and 'lastName' from the 'User' model when fetching the seat data
+        const seats = await SeatModel.find()
+        .populate('reservedBy', 'firstName lastName')
+        .populate('event','name');
+        res.status(200).json(seats);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to retrieve seats', error });
+    }
+};
+
+
+
+
+
+// admin seat delete
+export const deleteSeat = async (req, res) => {
+    const seatId = req.params.id; // Get seat ID from URL parameters
+
+    try {
+        // Find and delete the seat
+        const seat = await SeatModel.findByIdAndDelete(seatId);
+
+        if (!seat) {
+            return res.status(404).json({ message: 'Seat not found' });
+        }
+
+        res.status(200).json({ message: 'Seat deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error deleting seat', error });
+    }
+};

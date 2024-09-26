@@ -7,9 +7,18 @@ import { FaSearch, FaBars, FaHome, FaInfoCircle, FaServicestack, FaEnvelope, FaU
 const Header = ({ toggleSidebar, isOpen, isDarkMode, toggleTheme }) => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    // Assuming you have a search results page that takes the query as a parameter
+    if (searchQuery.trim()) {
+      navigate(`/${searchQuery}`);
+    }
   };
 
   return (
@@ -23,7 +32,6 @@ const Header = ({ toggleSidebar, isOpen, isDarkMode, toggleTheme }) => {
           </div>
         </div>
 
-        
         <nav className="hidden md:flex items-center space-x-8 text-lg font-medium text-white">
           <a href="/" className="hover:text-yellow-300 flex items-center space-x-1 transition-colors">
             <FaHome /> <span>Home</span>
@@ -38,17 +46,20 @@ const Header = ({ toggleSidebar, isOpen, isDarkMode, toggleTheme }) => {
             <FaEnvelope /> <span>Contact</span>
           </a>
 
-          
-          <div className="relative">
+          {/* Search Box */}
+          <form onSubmit={handleSearch} className="relative">
             <input
               type="text"
               placeholder="Search..."
               className="px-4 py-2 rounded-full text-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-300"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <FaSearch className="absolute top-3 right-3 text-gray-600" />
-          </div>
+            <button type="submit" className="absolute top-3 right-3 text-gray-600">
+              <FaSearch />
+            </button>
+          </form>
 
-          
           <a href="/register" className="bg-yellow-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-yellow-600 transition">
             Sign Up
           </a>
