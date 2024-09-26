@@ -1,24 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardActionArea, CardMedia, Typography, Grid, Container, Alert } from '@mui/material';
+import { Card, CardContent, CardActionArea, Typography, Grid, Container, Alert, CardMedia } from '@mui/material';
+import { styled } from '@mui/system';
+import LocationOnIcon from '@mui/icons-material/LocationOn'; 
+import EventIcon from '@mui/icons-material/Event';
+import img1 from '../../Assest/noevent.png'
 
 const EventList = () => {
   const [events, setEvents] = useState([]);
   const [error, setError] = useState('');
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
-  // Fetch events from the backend API
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const token = localStorage.getItem('token'); 
+        const token = localStorage.getItem('token');
         const response = await axios.get('http://localhost:5000/api/events', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setEvents(response.data); 
+
+        
+        const upcomingEvents = response.data.filter((event) => {
+          const eventDate = new Date(event.date);
+          return eventDate >= new Date(); 
+        });
+
+        setEvents(upcomingEvents); 
       } catch (error) {
         console.error('Error fetching events:', error);
         setError('Failed to fetch events.');
@@ -28,61 +38,139 @@ const EventList = () => {
     fetchEvents();
   }, []);
 
-
   const handleEventClick = (eventId) => {
     navigate(`/booking/${eventId}`);
- 
   };
 
+  const getDayOfWeek = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { weekday: 'long' });
+  };
+
+  const groupedEvents = events.reduce((groups, event) => {
+    const day = getDayOfWeek(event.date);
+    if (!groups[day]) {
+      groups[day] = [];
+    }
+    groups[day].push(event);
+    return groups;
+  }, {});
+
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday','Sunday'];
+  const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+
   return (
-
-    <div className='mt-20'>
-    <Container sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Upcoming Events
-      </Typography>
-      
-      {error && <Alert severity="error">{error}</Alert>}
-
-      {events.length === 0 ? (
-        <Typography variant="body1" color="textSecondary">
-          No events available
+    <div className=" mt-36">
+      <Container
+        sx={{
+          mt: 4,
+          background: 'white', 
+          padding: '20px',
+          borderRadius: '12px',
+        }}
+      >
+        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+          Upcoming Schedule
         </Typography>
-      ) : (
-        <Grid container spacing={3}>
-          {events.map((event) => (
-            <Grid item xs={12} sm={6} md={4} key={event._id}>
-              <Card sx={{ boxShadow: 3, borderRadius: 2, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' } }}>
-                <CardActionArea onClick={() => handleEventClick(event._id)} >
-                  
-                  <CardMedia
-                    component="img"
-                    height="80"
-                    image={event.imageUrl || 'https://rainbowpages.lk/uploads/listings/logo/s/slt_digital.jpg'} 
-                    alt={event.name}
-                  />
-                  <CardContent>
-                    <Typography variant="h6" component="h3" gutterBottom sx={{ color: '#3f51b5', fontWeight: 'bold' }}>
-                      {event.name}
-                    </Typography>
-                    <Typography variant="subtitle2" color="textSecondary" sx={{ mb: 1 }}>
-                      {new Date(event.date).toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
-                      <strong>Location:</strong> {event.location}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#555' }}>
-                      {event.description}
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      )}
-    </Container>
 
+        {error && <Alert severity="error">{error}</Alert>}
+
+        {events.length === 0 ? (
+          <Typography variant="body1" color="textSecondary">
+            No Schedule available
+          </Typography>
+        ) : (
+          <Grid container spacing={3}>
+            {daysOfWeek.map((day) => (
+              <Grid item xs={12} sm={6} md={2.4} key={day}>
+                {/* Highlight only the day text if it's today */}
+                <Typography
+                  variant="h5"
+                  sx={{
+                    mt: 4,
+                    mb: 2,
+                    fontWeight: 'bold',
+                    color: day === today ? 'green' : '#2c3e50', // White text if today
+                    backgroundColor: day === today ? '' : 'transparent', 
+                    padding: '10px 15px', // Add padding to the text only
+                    borderRadius: '8px', // Rounded text background for today
+                    display: 'inline-block', // This ensures only the text is highlighted, not the whole box
+                  }}
+                >
+                  {day} {day === today && '(Today)'}
+                </Typography>
+                {groupedEvents[day]?.length > 0 ? (
+                  groupedEvents[day].map((event) => (
+                    <Card
+                      key={event._id}
+                      sx={{
+                        boxShadow: 6, // Increased shadow for depth
+                        borderRadius: 2,
+                        mb: 2,
+                        background: 'linear-gradient(to bottom right, #ffecd2, #fcb69f)', // Gradient background
+                        transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smoother animation
+                        '&:hover': {
+                          transform: 'scale(1.05)',
+                          boxShadow: '0px 10px 20px rgba(0,0,0,0.15)', // Enhanced shadow on hover
+                        },
+                      }}
+                    >
+                      <CardActionArea onClick={() => handleEventClick(event._id)}>
+                       
+                        <CardContent>
+                          <Typography
+                            variant="h6"
+                            component="h3"
+                            gutterBottom
+                            sx={{ color: '#3f51b5', fontWeight: 'bold' }}
+                          >
+                            {event.name}
+                          </Typography>
+                          <Typography
+                            variant="subtitle2"
+                            color="textSecondary"
+                            sx={{ mb: 1, display: 'flex', alignItems: 'center' }}
+                          >
+                            <EventIcon sx={{ mr: 1 }} />
+                            {new Date(event.date).toLocaleString('en-US', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                            })}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            sx={{ mb: 1, display: 'flex', alignItems: 'center' }}
+                          >
+                            <LocationOnIcon sx={{ mr: 1 }} /> {event.location}
+                          </Typography>
+                          <Typography variant="body2" sx={{ color: '#555' }}>
+                            {event.description}
+                          </Typography>
+                        </CardContent>
+                      </CardActionArea>
+                    </Card>
+                  ))
+                ) : (
+                  <div>
+                    <CardMedia
+                      component="img"
+                      image={img1}
+                      alt={`No events on ${day}`}
+                      sx={{ height: 150, width: '100%', objectFit: 'contain', mb: 2 }}
+                    />
+                    <Typography variant="body2" color="textSecondary" align="center">
+                      No Schedule on {day}
+                    </Typography>
+                  </div>
+                )}
+              </Grid>
+            ))}
+          </Grid>
+        )}
+      </Container>
     </div>
   );
 };

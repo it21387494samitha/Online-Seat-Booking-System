@@ -5,7 +5,8 @@ import {
     GetEvents, 
     GetEventById, 
     UpdateEvent, 
-    DeleteEvent 
+    DeleteEvent, 
+
 } from '../Controllers/EventController.js';
 
 const router = express.Router();
@@ -17,5 +18,6 @@ router.get('/all',GetEvents);
 router.get('/:eventId', verifyToken, GetEventById);
 router.put('/:eventId', verifyToken, UpdateEvent);
 router.delete('/:eventId', verifyToken, DeleteEvent);
+
 
 export default router;

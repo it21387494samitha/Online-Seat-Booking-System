@@ -34,14 +34,19 @@ const EventForm = () => {
   });
   const [minDate, setMinDate] = useState('');
   const [maxDate, setMaxDate] = useState('');
+  const [existingEvents, setExistingEvents] = useState([]);
+
 
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+  const [isSeatSubmitDisabled, setIsSeatSubmitDisabled] = useState(true);
 
   // Calculate the current week's Monday and Sunday
   const calculateCurrentWeek = () => {
     const currentDate = new Date();
     const dayOfWeek = currentDate.getDay(); // Get current day (0 - Sunday, 1 - Monday, etc.)
-    
+
     const diffToMonday = currentDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1);
     const startOfWeek = new Date(currentDate.setDate(diffToMonday)); // Monday
     const endOfWeek = new Date(currentDate.setDate(startOfWeek.getDate() + 6)); // Sunday
@@ -51,12 +56,20 @@ const EventForm = () => {
     setMaxDate(formatDate(endOfWeek));
   };
 
-  // UseEffect to calculate the week range on component mount
   useEffect(() => {
     calculateCurrentWeek();
   }, []);
 
-  // Handle form field changes for the event
+  useEffect(() => {
+    const isFormValid = formData.name && formData.date && formData.location;
+    setIsSubmitDisabled(!isFormValid);
+  }, [formData]);
+
+  useEffect(() => {
+    const isSeatsValid = seatData.rows && seatData.columns && parseInt(seatData.columns) > 0;
+    setIsSeatSubmitDisabled(!isSeatsValid);
+  }, [seatData]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -77,7 +90,6 @@ const EventForm = () => {
     }
   };
 
-  // Handle form field changes for the seat structure
   const handleSeatChange = (e) => {
     setSeatData({
       ...seatData,
@@ -85,12 +97,21 @@ const EventForm = () => {
     });
   };
 
-  // Submit form data to the backend API to create an event
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // Check if an event already exists for the selected date
+    const eventExists = existingEvents.some(
+      (event) => new Date(event.date).toISOString().split('T')[0] === formData.date
+    );
+  
+    if (eventExists) {
+      setMessage('An event already exists for this date. Please choose another date.');
+      return; // Stop submission if an event already exists
+    }
+  
     try {
-      const token = localStorage.getItem('token'); // assuming token is stored in localStorage
+      const token = localStorage.getItem('token');
       const response = await axios.post(
         'http://localhost:5000/api/events/create',
         formData,
@@ -100,11 +121,11 @@ const EventForm = () => {
           },
         }
       );
-
+  
       if (response.status === 201) {
         setMessage('Event created successfully!');
-        setEventId(response.data._id); // Store the created event ID
-        setModalIsOpen(true); // Open the modal to add seats
+        setEventId(response.data._id);
+        setModalIsOpen(true);
         setFormData({ name: '', date: '', location: '', description: '' });
       }
     } catch (error) {
@@ -112,8 +133,8 @@ const EventForm = () => {
       setMessage('Failed to create event.');
     }
   };
+  
 
-  // Submit seat structure to the backend
   const handleSeatSubmit = async (e) => {
     e.preventDefault();
 
@@ -143,6 +164,28 @@ const EventForm = () => {
     }
   };
 
+
+
+  useEffect(() => {
+    const fetchExistingEvents = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:5000/api/events', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setExistingEvents(response.data); // Assuming response.data is an array of events
+      } catch (error) {
+        console.error('Error fetching existing events:', error);
+      }
+    };
+  
+    fetchExistingEvents();
+    calculateCurrentWeek(); // Keep this if you still need to calculate min and max dates
+  }, []);
+  
+
   return (
     <div className='mt-14 '>
       <Box sx={{ padding: 3 }}>
@@ -152,7 +195,6 @@ const EventForm = () => {
         {message && <Alert severity="info">{message}</Alert>}
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
-            {/* Weekday Dropdown */}
             <Grid item xs={12} md={6}>
               <FormControl fullWidth required>
                 <InputLabel>Day of Week</InputLabel>
@@ -209,12 +251,11 @@ const EventForm = () => {
               />
             </Grid>
           </Grid>
-          <Button type="submit" variant="contained" color="primary" sx={{ mt: 3 }}>
+          <Button type="submit" variant="contained" color="primary" sx={{ mt: 3 }} disabled={isSubmitDisabled}>
             Create Event
           </Button>
         </form>
 
-        {/* Modal for adding seats */}
         <Dialog open={modalIsOpen} onClose={() => setModalIsOpen(false)}>
           <DialogTitle>Add Seats</DialogTitle>
           <DialogContent>
@@ -243,7 +284,7 @@ const EventForm = () => {
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleSeatSubmit} variant="contained" color="primary">
+            <Button onClick={handleSeatSubmit} variant="contained" color="primary" disabled={isSeatSubmitDisabled}>
               Add Seats
             </Button>
             <Button onClick={() => setModalIsOpen(false)} color="secondary">
