@@ -21,20 +21,21 @@ const EventList = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-
+  
+        const today = new Date().toLocaleDateString('en-US');
         
         const upcomingEvents = response.data.filter((event) => {
-          const eventDate = new Date(event.date);
-          return eventDate >= new Date(); 
+          const eventDate = new Date(event.date).toLocaleDateString('en-US');
+          return eventDate >= today; // Include today's events
         });
-
+  
         setEvents(upcomingEvents); 
       } catch (error) {
         console.error('Error fetching events:', error);
         setError('Failed to fetch events.');
       }
     };
-
+  
     fetchEvents();
   }, []);
 
@@ -56,7 +57,7 @@ const EventList = () => {
     return groups;
   }, {});
 
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday','Sunday'];
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday','Saturday','Sunday'];
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
 
   return (

@@ -186,9 +186,9 @@ export const GetBookingHistory = async (req, res) => {
     try {
         // Find all seats reserved by this user
         const bookings = await SeatModel.find({ reservedBy: userId })
-            .populate('event', 'name date') // Optionally populate event details
-            .select('seatNumber event'); // Select fields to return
-
+        .populate('event', 'name date') // populate event details
+        .select('seatNumber event'); // Select fields to return
+      
         if (!bookings.length) {
             return res.status(404).json({ message: 'No booking history found' });
         }
@@ -225,16 +225,21 @@ export const deleteBooking = async (req, res) => {
 
   // Get all seats for an event (admin route)
   export const ViewAllSeats = async (req, res) => {
+    const { eventId } = req.params; // Ensure eventId is passed correctly if needed
     try {
-        // Populating 'firstName' and 'lastName' from the 'User' model when fetching the seat data
+        // Find all seats for the event, including reserved ones, and populate user and event details
         const seats = await SeatModel.find()
-        .populate('reservedBy', 'firstName lastName')
-        .populate('event','name');
+        .populate('reservedBy', 'firstName lastName')  // Populate reservedBy with firstName and lastName from User model
+        .populate('event', 'name');  // Populate event with name from Event model
+    
+
+        
         res.status(200).json(seats);
     } catch (error) {
         res.status(500).json({ message: 'Failed to retrieve seats', error });
     }
 };
+
 
 
 
@@ -258,3 +263,25 @@ export const deleteSeat = async (req, res) => {
         res.status(500).json({ message: 'Error deleting seat', error });
     }
 };
+
+
+export const ViewEventSeats = async (req, res) => {
+    const { eventId } = req.params; // Get event ID from the request parameters
+
+    try {
+        // Find all seats related to this event
+        const seats = await SeatModel.find({ event: eventId });
+        
+        if (!seats.length) {
+            return res.status(404).json({ message: 'No seats found for this event' });
+        }
+
+        // Return all seats (both booked and available)
+        res.status(200).json(seats);
+    } catch (error) {
+        res.status(500).json({ message: 'Error retrieving seats', error });
+    }
+};
+
+
+

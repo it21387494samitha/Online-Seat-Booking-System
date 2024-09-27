@@ -74,30 +74,33 @@ const BookingHistory = () => {
       ) : (
         <div className="grid grid-cols-1 gap-6">
           {bookings.map((booking) => (
-            <div
-              key={booking._id}
-              className="p-6 border rounded-lg shadow-lg bg-white hover:shadow-2xl transition-shadow duration-300 flex justify-between items-center"
-            >
-              <div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">{booking.event.name}</h3>
-                <p className="text-gray-600 flex items-center mb-1">
-                  <FontAwesomeIcon icon={faCalendarAlt} className="mr-2 text-blue-500" />
-                  <strong>Date: </strong> {new Date(booking.event.date).toLocaleDateString()}
-                </p>
-                <p className="text-gray-600 flex items-center">
-                  <FontAwesomeIcon icon={faChair} className="mr-2 text-green-500" />
-                  <strong>Seat: </strong> {booking.seatNumber}
-                </p>
-              </div>
-              <button
-                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-transform transform hover:scale-105 flex items-center"
-                onClick={() => handleDelete(booking._id)}
-              >
-                <FontAwesomeIcon icon={faTrash} className="mr-2" />
-                Delete
-              </button>
-            </div>
-          ))}
+  <div
+    key={booking._id}
+    className="p-6 border rounded-lg shadow-lg bg-white hover:shadow-2xl transition-shadow duration-300 flex justify-between items-center"
+  >
+    <div>
+      <h3 className="text-xl font-semibold text-gray-800 mb-2">
+        {booking.event ? booking.event.name : 'Event Name Unavailable'}
+      </h3>
+      <p className="text-gray-600 flex items-center mb-1">
+        <FontAwesomeIcon icon={faCalendarAlt} className="mr-2 text-blue-500" />
+        <strong>Date: </strong> {booking.event ? new Date(booking.event.date).toLocaleDateString() : 'N/A'}
+      </p>
+      <p className="text-gray-600 flex items-center">
+        <FontAwesomeIcon icon={faChair} className="mr-2 text-green-500" />
+        <strong>Seat: </strong> {booking.seatNumber}
+      </p>
+    </div>
+    <button
+      className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-transform transform hover:scale-105 flex items-center"
+      onClick={() => handleDelete(booking._id)}
+    >
+      <FontAwesomeIcon icon={faTrash} className="mr-2" />
+      Delete
+    </button>
+  </div>
+))}
+
         </div>
       )}
     </div>

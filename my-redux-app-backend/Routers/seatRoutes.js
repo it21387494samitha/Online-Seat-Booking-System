@@ -1,6 +1,6 @@
 import express from 'express';
 import { verifyToken } from '../Middleware/VerifyToken.js';
-import { ReserveSeat, CancelReservation, ViewAvailableSeats, CreateSeat, CreateSeatStructure, GetBookedSeatCount, GetBookingHistory, deleteBooking, ViewAllSeats, deleteSeat } from '../Controllers/SeatBookingController.js';
+import { ReserveSeat, CancelReservation, ViewAvailableSeats, CreateSeat, CreateSeatStructure, GetBookedSeatCount, GetBookingHistory, deleteBooking, ViewAllSeats, deleteSeat, ViewEventSeats } from '../Controllers/SeatBookingController.js';
 
 const router = express.Router();
 
@@ -31,6 +31,11 @@ router.delete('/history/:id', verifyToken, deleteBooking);
 
 
 router.get('/seats', verifyToken, ViewAllSeats); // <-- New Route
+
+router.get('/event/:eventId/seats', verifyToken, ViewEventSeats);
+
+
+
 
 
 router.delete('/seats/:id', verifyToken,deleteSeat);
