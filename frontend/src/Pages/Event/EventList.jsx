@@ -6,6 +6,7 @@ import { styled } from '@mui/system';
 import LocationOnIcon from '@mui/icons-material/LocationOn'; 
 import EventIcon from '@mui/icons-material/Event';
 import img1 from '../../Assest/noevent.png'
+import { Media } from 'accessible-astro-components';
 
 const EventList = () => {
   const [events, setEvents] = useState([]);
@@ -26,7 +27,7 @@ const EventList = () => {
         
         const upcomingEvents = response.data.filter((event) => {
           const eventDate = new Date(event.date).toLocaleDateString('en-US');
-          return eventDate >= today; // Include today's events
+          return eventDate >= today; 
         });
   
         setEvents(upcomingEvents); 
@@ -57,7 +58,7 @@ const EventList = () => {
     return groups;
   }, {});
 
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday','Saturday','Sunday'];
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
 
   return (
@@ -77,8 +78,16 @@ const EventList = () => {
         {error && <Alert severity="error">{error}</Alert>}
 
         {events.length === 0 ? (
-          <Typography variant="body1" color="textSecondary">
+          <Typography variant="body1" color="textSecondary" className=''>
             No Schedule available
+<div>
+  <img 
+  src="https://img.freepik.com/free-vector/hand-drawn-no-data-concept_52683-127823.jpg"
+  alt=" NO Schedule find"
+  className='   w-1/3 ml-64 align-middle '
+  />
+</div>
+           
           </Typography>
         ) : (
           <Grid container spacing={3}>
