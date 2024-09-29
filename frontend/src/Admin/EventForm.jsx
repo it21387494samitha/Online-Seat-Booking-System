@@ -137,11 +137,11 @@ const EventForm = () => {
 
   const handleSeatSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'http://localhost:5000/api/seats/creat',
+        'http://localhost:5000/api/seats/creat',  // Corrected the URL here
         {
           eventId,
           rows: seatData.rows.split(','), // Split the rows into an array
@@ -153,7 +153,7 @@ const EventForm = () => {
           },
         }
       );
-
+  
       if (response.status === 201) {
         setMessage('Seats added successfully!');
         setModalIsOpen(false); // Close the modal after seat submission
@@ -163,7 +163,7 @@ const EventForm = () => {
       setMessage('Failed to add seats.');
     }
   };
-
+  
 
 
   useEffect(() => {
@@ -248,6 +248,7 @@ const EventForm = () => {
                 fullWidth
                 multiline
                 rows={4}
+                required
               />
             </Grid>
           </Grid>

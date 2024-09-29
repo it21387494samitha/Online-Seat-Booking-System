@@ -1,4 +1,8 @@
 import EventModel from '../Models/EventModel.js';
+import QRCode from 'qrcode';
+
+// Create an event
+
 
 // Create an event
 export const CreateEvent = async (req, res) => {
@@ -6,6 +10,7 @@ export const CreateEvent = async (req, res) => {
     const userId = req.user.id; // Assuming user is authenticated
 
     try {
+        // Create the new event object
         const newEvent = new EventModel({
             name,
             date,
@@ -14,12 +19,22 @@ export const CreateEvent = async (req, res) => {
             createdBy: userId
         });
 
+        // Generate the QR code based on event data
+        const qrCodeData = `${name} - ${date} - ${location}`;
+        const qrCodeUrl = await QRCode.toDataURL(qrCodeData);
+
+        // Add the generated QR code URL to the event
+        newEvent.qrCode = qrCodeUrl;
+
+        // Save the event to the database
         const savedEvent = await newEvent.save();
         res.status(201).json(savedEvent);
     } catch (error) {
         res.status(500).json({ message: 'Error creating event', error });
     }
 };
+
+
 
 // Get all events
 export const GetEvents = async (req, res) => {

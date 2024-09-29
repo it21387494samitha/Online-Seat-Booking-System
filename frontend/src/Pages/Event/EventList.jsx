@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardActionArea, Typography, Grid, Container, Alert, CardMedia } from '@mui/material';
 import { styled } from '@mui/system';
-import LocationOnIcon from '@mui/icons-material/LocationOn'; 
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import EventIcon from '@mui/icons-material/Event';
 import img1 from '../../Assest/noevent.png'
 import { Media } from 'accessible-astro-components';
@@ -22,21 +22,21 @@ const EventList = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-  
+
         const today = new Date().toLocaleDateString('en-US');
-        
+
         const upcomingEvents = response.data.filter((event) => {
           const eventDate = new Date(event.date).toLocaleDateString('en-US');
-          return eventDate >= today; 
+          return eventDate >= today;
         });
-  
-        setEvents(upcomingEvents); 
+
+        setEvents(upcomingEvents);
       } catch (error) {
         console.error('Error fetching events:', error);
         setError('Failed to fetch events.');
       }
     };
-  
+
     fetchEvents();
   }, []);
 
@@ -58,7 +58,7 @@ const EventList = () => {
     return groups;
   }, {});
 
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
 
   return (
@@ -66,7 +66,7 @@ const EventList = () => {
       <Container
         sx={{
           mt: 4,
-          background: 'white', 
+          background: 'white',
           padding: '20px',
           borderRadius: '12px',
         }}
@@ -80,14 +80,14 @@ const EventList = () => {
         {events.length === 0 ? (
           <Typography variant="body1" color="textSecondary" className=''>
             No Schedule available
-<div>
-  <img 
-  src="https://img.freepik.com/free-vector/hand-drawn-no-data-concept_52683-127823.jpg"
-  alt=" NO Schedule find"
-  className='   w-1/3 ml-64 align-middle '
-  />
-</div>
-           
+            <div>
+              <img
+                src="https://img.freepik.com/free-vector/hand-drawn-no-data-concept_52683-127823.jpg"
+                alt=" NO Schedule find"
+                className='   w-1/3 ml-64 align-middle '
+              />
+            </div>
+
           </Typography>
         ) : (
           <Grid container spacing={3}>
@@ -101,7 +101,7 @@ const EventList = () => {
                     mb: 2,
                     fontWeight: 'bold',
                     color: day === today ? 'green' : '#2c3e50', // White text if today
-                    backgroundColor: day === today ? '' : 'transparent', 
+                    backgroundColor: day === today ? '' : 'transparent',
                     padding: '10px 15px', // Add padding to the text only
                     borderRadius: '8px', // Rounded text background for today
                     display: 'inline-block', // This ensures only the text is highlighted, not the whole box
@@ -114,19 +114,19 @@ const EventList = () => {
                     <Card
                       key={event._id}
                       sx={{
-                        boxShadow: 6, // Increased shadow for depth
+                        boxShadow: 6, 
                         borderRadius: 2,
                         mb: 2,
-                        background: 'linear-gradient(to bottom right, #ffecd2, #fcb69f)', // Gradient background
-                        transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smoother animation
+                        background: 'linear-gradient(to bottom right, #ffecd2, #fcb69f)', 
+                        transition: 'transform 0.3s ease, box-shadow 0.3s ease', 
                         '&:hover': {
                           transform: 'scale(1.05)',
-                          boxShadow: '0px 10px 20px rgba(0,0,0,0.15)', // Enhanced shadow on hover
+                          boxShadow: '0px 10px 20px rgba(0,0,0,0.15)',
                         },
                       }}
                     >
                       <CardActionArea onClick={() => handleEventClick(event._id)}>
-                       
+
                         <CardContent>
                           <Typography
                             variant="h6"

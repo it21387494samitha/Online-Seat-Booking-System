@@ -30,5 +30,5 @@ const seatSchema = new mongoose.Schema({
     }
 });
 
-const SeatModel = mongoose.model('Seat', seatSchema);
+const SeatModel =mongoose.model('Seat', seatSchema);
 export default SeatModel;

@@ -1,5 +1,6 @@
 import SeatModel from '../Models/SeatModel.js';
 import EventModel from '../Models/EventModel.js';
+import QRCode from 'qrcode';
 
 // If you have an event model
 
@@ -117,6 +118,7 @@ export const CreateSeat = async (req, res) => {
 
 
 
+
 export const CreateSeatStructure = async (req, res) => {
     const { eventId, rows, columns } = req.body;
 
@@ -140,14 +142,20 @@ export const CreateSeatStructure = async (req, res) => {
                     return res.status(400).json({ message: `Seat ${seatNumber} already exists for this event` });
                 }
 
+                
+                const qrCodeData = `Seat Number: ${seatNumber}, Event ID: ${eventId}`; // Customize the data as needed
+                const qrCodeUrl = await QRCode.toDataURL(qrCodeData); // Generate QR code
+
+                
                 const newSeat = new SeatModel({
                     seatNumber,
                     row,
                     column: col,
                     event: eventId,
-                    isAvailable: true // Default to available
+                    isAvailable: true, // Default to available
+                    qrCode: qrCodeUrl, // Add QR code URL to the seat model
                 });
-                
+
                 seats.push(newSeat);
             }
         }
@@ -160,6 +168,10 @@ export const CreateSeatStructure = async (req, res) => {
         res.status(500).json({ message: 'Error creating seats', error });
     }
 };
+
+
+
+
 
 
 

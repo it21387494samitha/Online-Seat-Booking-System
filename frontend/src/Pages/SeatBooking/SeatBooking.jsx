@@ -110,13 +110,13 @@ const SeatBooking = () => {
   }
 
   return (
-    <div className="flex flex-col items-center mt-10">
+    <div className="flex flex-col items-center mt-20">
       {/* Image Section */}
       <div className="w-full flex justify-center mb-5">
         <img
           src="https://cdn.prod.website-files.com/65e8dbcc20b03bec9c6fe12c/65ea107210b0d454518127e0_65565ddc63f46e2b10932b52_SEAT%20PLAN%20-EDIT.svg"
           alt="Event"
-          className="w-48 h-48  shadow-lg object-cover"
+          className="w-64 h-48  shadow-lg object-cover"
         />
       </div>
 

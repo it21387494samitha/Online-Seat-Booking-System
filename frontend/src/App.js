@@ -18,6 +18,7 @@ import BookingHistory from './Pages/History/BookingHistory';
 import Settings from './Pages/Setting/Setting';
 import AdminSeatBooking from './Admin/AdminSeatBooking';
 import ManageUsers from './Admin/ManageUsers';
+import QR from './Admin/QRCodeDisplay';
 
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
             <Route path="/ad" element={<AdminSeatManagement />} />
             <Route path="/allseat" element={<AdminSeatBooking />} />
             <Route path="/manage-users"  element={<ManageUsers/>} />
+            <Route path="/QR"  element={<QR/>} />
 
             {/* Customer Routes */}
             <Route path="/register" element={<Register />} />

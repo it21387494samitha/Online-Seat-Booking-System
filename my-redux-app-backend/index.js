@@ -7,8 +7,10 @@ import userRoute from './Routers/UserRouter.js';
 import seatRoutes from './Routers/seatRoutes.js';
 import eventRoutes from './Routers/EventRoutes.js';
 import settingRoutes from './Routers/SettingRoute.js'
+import attendenceRoute from './Routers/AttendanceRouter.js'
 import path from 'path';
 import { fileURLToPath } from 'url';
+
 
 
 dotenv.config();
@@ -34,7 +36,9 @@ app.use('/users',userRoute);
 app.use("/api/seats", seatRoutes);
 app.use("/api/events", eventRoutes);
 
-app.use('/api',settingRoutes )
+app.use('/api',settingRoutes );
+
+app.use('//attendance',attendenceRoute );
 
 ///// Get the current file path
 app.get('/users/profile/image/:id', async (req, res) => {

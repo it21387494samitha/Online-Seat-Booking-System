@@ -20,6 +20,10 @@ const eventSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
+    },
+    qrCode: {
+        type: String, // Added to store the QR code as a string
+        
     }
 });
 
