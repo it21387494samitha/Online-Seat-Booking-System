@@ -24,6 +24,10 @@ const eventSchema = new mongoose.Schema({
     qrCode: {
         type: String, // Added to store the QR code as a string
         
+    },
+    isDeleted:{
+        type:  Boolean,
+        default: false
     }
 });
 

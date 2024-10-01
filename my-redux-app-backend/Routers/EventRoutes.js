@@ -5,7 +5,8 @@ import {
     GetEvents, 
     GetEventById, 
     UpdateEvent, 
-    DeleteEvent, 
+    DeleteEvent,
+    SoftDeleteEvent, 
 
 } from '../Controllers/EventController.js';
 
@@ -18,6 +19,7 @@ router.get('/all',GetEvents);
 router.get('/:eventId', verifyToken, GetEventById);
 router.put('/:eventId', verifyToken, UpdateEvent);
 router.delete('/:eventId', verifyToken, DeleteEvent);
+router.delete('/soft/:eventId',verifyToken, SoftDeleteEvent);
 
 
 export default router;

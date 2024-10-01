@@ -113,10 +113,10 @@ function AdminDash() {
           
           <div
             className="bg-white p-8 rounded-lg shadow-lg hover:bg-red-100 transform transition duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer"
-            onClick={() => navigate('/settings')}
+            onClick={() => navigate('/QR')}
           >
-            <h3 className="text-2xl font-bold mb-4 text-gray-800">Settings</h3>
-            <p className="text-gray-600">Configure system preferences</p>
+            <h3 className="text-2xl font-bold mb-4 text-gray-800">Attenance</h3>
+            <p className="text-gray-600"> Get attendance via QR code</p>
           </div>
         </div>
 

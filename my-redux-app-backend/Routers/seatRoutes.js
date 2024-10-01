@@ -1,6 +1,6 @@
 import express from 'express';
 import { verifyToken } from '../Middleware/VerifyToken.js';
-import { ReserveSeat, CancelReservation, ViewAvailableSeats, CreateSeat, CreateSeatStructure, GetBookedSeatCount, GetBookingHistory, deleteBooking, ViewAllSeats, deleteSeat, ViewEventSeats } from '../Controllers/SeatBookingController.js';
+import { ReserveSeat, CancelReservation, ViewAvailableSeats, CreateSeat, CreateSeatStructure, GetBookedSeatCount, GetBookingHistory, deleteBooking, ViewAllSeats, deleteSeat, ViewEventSeats, SoftDeleteSeat } from '../Controllers/SeatBookingController.js';
 
 const router = express.Router();
 
@@ -39,6 +39,13 @@ router.get('/event/:eventId/seats', verifyToken, ViewEventSeats);
 
 
 router.delete('/seats/:id', verifyToken,deleteSeat);
+
+
+
+
+///
+
+router.delete('/soft/:id',verifyToken,SoftDeleteSeat)
 
     
 export default router;

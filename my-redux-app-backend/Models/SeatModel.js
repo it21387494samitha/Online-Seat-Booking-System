@@ -27,7 +27,12 @@ const seatSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Event',
         required: true
+    },
+    isDeleted:{
+        type:  Boolean,
+        default: false
     }
+
 });
 
 const SeatModel =mongoose.model('Seat', seatSchema);

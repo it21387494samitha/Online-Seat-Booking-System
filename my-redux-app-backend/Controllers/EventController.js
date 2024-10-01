@@ -16,7 +16,8 @@ export const CreateEvent = async (req, res) => {
             date,
             location,
             description,
-            createdBy: userId
+            createdBy: userId,
+            isDeleted: false
         });
 
         // Generate the QR code based on event data
@@ -39,7 +40,7 @@ export const CreateEvent = async (req, res) => {
 // Get all events
 export const GetEvents = async (req, res) => {
     try {
-        const events = await EventModel.find();
+        const events = await EventModel.find({isDeleted:false});
         res.status(200).json(events);
     } catch (error) {
         res.status(500).json({ message: 'Error retrieving events', error });
@@ -95,5 +96,18 @@ export const DeleteEvent = async (req, res) => {
         res.status(200).json({ message: 'Event deleted successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Error deleting event', error });
+    }
+};
+
+
+
+//
+export const SoftDeleteEvent = async (req, res) => {
+    const{eventId} =req.params ;
+    try {
+        await EventModel.findByIdAndUpdate(eventId, { isDeleted: true });
+    } catch (error) {
+        console.error('Error performing soft delete for event:', error);
+        throw error;
     }
 };

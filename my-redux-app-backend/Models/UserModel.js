@@ -40,6 +40,10 @@ const userSchema = new mongoose.Schema({
         data: Buffer,      // Stores image data as a buffer
         contentType: String // Stores image file type (e.g., 'image/jpeg', 'image/png')
       },
+      isDeleted:{
+        type:  Boolean,
+        default: false
+    }
 });
 
  const UserModel= mongoose.model("User", userSchema);

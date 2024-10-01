@@ -15,17 +15,30 @@ const Header = ({ toggleSidebar, isOpen, isDarkMode, toggleTheme }) => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // Assuming you have a search results page that takes the query as a parameter
+    
     if (searchQuery.trim()) {
       navigate(`/${searchQuery}`);
     }
   };
 
+  const handleclick = () => {
+    const user = localStorage.getItem('userRole');
+
+    if(user==='admin'){
+      navigate('/admin');
+    }
+    else{
+      navigate('/')
+    }
+  };
+
+
+
   return (
     <>
       <header className={`bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 shadow-lg fixed top-0 w-full z-50 flex items-center justify-between px-8 py-4`}>
         {/* Logo and Title */}
-        <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/')}>
+        <div className="flex items-center space-x-3 cursor-pointer" onClick={handleclick}>
           <img src={Logo} alt="Logo" className="w-14 h-14 object-contain ml-5" /> 
           <div className="text-3xl font-bold text-white ml-5">
             Online Reservation

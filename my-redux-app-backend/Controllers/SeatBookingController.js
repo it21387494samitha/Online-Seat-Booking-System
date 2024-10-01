@@ -296,4 +296,13 @@ export const ViewEventSeats = async (req, res) => {
 };
 
 
+////////////////////////////////////////////////////////////////
 
+export const SoftDeleteSeat = async(seatId)=>{
+    try {
+        await SeatModel.findByIdAndUpdate(seatId,{isDeleted:true});
+    } catch (error) {
+        console.error('error soft delete for seat',error)
+        throw error;;
+    }
+}

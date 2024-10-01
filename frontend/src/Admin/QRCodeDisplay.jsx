@@ -23,13 +23,18 @@ const QRCodeDisplay = () => {
           },
         });
 
-        const today = new Date().toLocaleDateString('en-US');
-        const upcomingEvents = response.data.filter((event) => {
-          const eventDate = new Date(event.date).toLocaleDateString('en-US');
-          return eventDate >= today;
+        // Get the current date and the end date of the current week (Sunday)
+        const today = new Date();
+        const startOfWeek = today.setDate(today.getDate() - today.getDay());
+        const endOfWeek = today.setDate(today.getDate() + (7 - today.getDay()));
+
+        // Filter events that fall within the current week
+        const weeklyEvents = response.data.filter((event) => {
+          const eventDate = new Date(event.date);
+          return eventDate >= startOfWeek && eventDate <= endOfWeek;
         });
 
-        setEvents(upcomingEvents);
+        setEvents(weeklyEvents);
       } catch (error) {
         console.error('Error fetching events:', error);
         setError('Failed to fetch events.');
@@ -40,7 +45,7 @@ const QRCodeDisplay = () => {
   }, []);
 
   const handleEventClick = (eventId) => {
-    navigate(`/event/${eventId}`);
+    navigate(``);
   };
 
   const handleEditClick = (eventId) => {
@@ -50,12 +55,15 @@ const QRCodeDisplay = () => {
   const handleDeleteClick = async (eventId) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/events/${eventId}`, {
+      await axios.delete(`http://localhost:5000/api/events/soft/${eventId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      
       setEvents(events.filter(event => event._id !== eventId));
+      window.location.reload();
+      
     } catch (error) {
       console.error('Error deleting event:', error);
       setError('Failed to delete event.');
