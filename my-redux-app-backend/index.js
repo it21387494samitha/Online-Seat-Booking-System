@@ -8,6 +8,7 @@ import seatRoutes from './Routers/seatRoutes.js';
 import eventRoutes from './Routers/EventRoutes.js';
 import settingRoutes from './Routers/SettingRoute.js'
 import attendenceRoute from './Routers/AttendanceRouter.js'
+import feedback from './Routers/FeedbackRouter.js'
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -38,7 +39,9 @@ app.use("/api/events", eventRoutes);
 
 app.use('/api',settingRoutes );
 
-app.use('//attendance',attendenceRoute );
+app.use('/attendance',attendenceRoute );
+
+app.use('/api/feedback', feedback);
 
 ///// Get the current file path
 app.get('/users/profile/image/:id', async (req, res) => {
