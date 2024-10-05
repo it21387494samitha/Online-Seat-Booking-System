@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaChair, FaCheckCircle, FaTimesCircle, FaSpinner } from 'react-icons/fa'; // Icons from Font Awesome
+import { FaChair, FaCheckCircle, FaTimesCircle, FaSpinner } from 'react-icons/fa'; 
 
 const SeatBooking = () => {
   const { eventId } = useParams();
@@ -12,10 +12,11 @@ const SeatBooking = () => {
   const [eventName, setEventName] = useState('');
   const [confirmReservation, setConfirmReservation] = useState(false);
   const [selectedSeat, setSelectedSeat] = useState(null);
+  const [feedback, setFeedback] = useState('');
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false); // Track feedback submission status
 
   const token = localStorage.getItem('token');
 
-  // Fetch seats and event name API logic
   const fetchSeatsAndEvent = async () => {
     try {
       const seatResponse = await axios.get(
@@ -26,7 +27,7 @@ const SeatBooking = () => {
           },
         }
       );
-      setSeats(seatResponse.data); // Store all seats in state
+      setSeats(seatResponse.data);
 
       const eventResponse = await axios.get(
         `http://localhost:5000/api/events/${eventId}`,
@@ -36,16 +37,15 @@ const SeatBooking = () => {
           },
         }
       );
-      setEventName(eventResponse.data.name); // Store the event name in state
+      setEventName(eventResponse.data.name);
     } catch (error) {
       console.error('Error fetching data:', error);
       setError('Error fetching data.');
     } finally {
-      setLoading(false); // Loading is done
+      setLoading(false);
     }
   };
 
-  // Handle seat reservation API logic
   const handleSeatReservation = async () => {
     try {
       await axios.post(
@@ -60,7 +60,6 @@ const SeatBooking = () => {
 
       setError('');
       setConfirmReservation(false);
-      // Update seat status in UI after successful reservation
       setSeats((prevSeats) =>
         prevSeats.map((seat) =>
           seat._id === selectedSeat ? { ...seat, isAvailable: false } : seat
@@ -80,7 +79,26 @@ const SeatBooking = () => {
     }
   };
 
-  // Fetch data when component mounts
+  // Submit Feedback
+  const submitFeedback = async () => {
+    try {
+      await axios.post(
+        'http://localhost:5000/api/feedback',
+        { feedback },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setFeedback('');
+      setFeedbackSubmitted(true); // Set feedback as submitted
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      setError('Error submitting feedback. Please try again.');
+    }
+  };
+
   useEffect(() => {
     if (!token) {
       setError('You must be logged in to book a seat.');
@@ -89,7 +107,7 @@ const SeatBooking = () => {
     }
 
     if (eventId && token) {
-      fetchSeatsAndEvent(); // Call the API to fetch data
+      fetchSeatsAndEvent();
     }
   }, [eventId, token]);
 
@@ -98,7 +116,6 @@ const SeatBooking = () => {
     setConfirmReservation(true);
   };
 
-  // Render loading state
   if (loading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -127,7 +144,6 @@ const SeatBooking = () => {
           <span className="text-indigo-600">{eventName || eventId}</span>
         </h2>
 
-        {/* Error and Success messages */}
         {error && <p className="text-red-500 text-center mb-5">{error}</p>}
         {success && <p className="text-green-500 text-center mb-5">{success}</p>}
 
@@ -165,7 +181,6 @@ const SeatBooking = () => {
           ))}
         </div>
 
-        {/* Confirm Reservation Modal */}
         {confirmReservation && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
             <div className="bg-white p-6 rounded-lg shadow-lg transform transition-all scale-105">
@@ -189,6 +204,32 @@ const SeatBooking = () => {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Feedback Form */}
+        {success && !feedbackSubmitted && (
+          <div className="mt-10 p-6 bg-white rounded-lg shadow-lg">
+            <h3 className="text-lg font-semibold mb-4">Submit Feedback</h3>
+            <textarea
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+              className="w-full p-3 border rounded-lg mb-4"
+              rows="4"
+              placeholder="Your feedback here..."
+            ></textarea>
+            <button
+              onClick={submitFeedback}
+              className="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-500 transition-colors"
+            >
+              Submit Feedback
+            </button>
+          </div>
+        )}
+
+        {feedbackSubmitted && (
+          <p className="text-green-500 text-center mt-5">
+            Thank you for your feedback!
+          </p>
         )}
       </div>
     </div>

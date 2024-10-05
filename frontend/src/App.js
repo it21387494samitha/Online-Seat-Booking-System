@@ -19,6 +19,7 @@ import Settings from './Pages/Setting/Setting';
 import AdminSeatBooking from './Admin/AdminSeatBooking';
 import ManageUsers from './Admin/ManageUsers';
 import QR from './Admin/QRCodeDisplay';
+import Service from './Pages/Service/Service';
 
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
             <Route path="/" element={<CustomerDash />} />
             <Route path="/mevent" element={<ManageEvents />} />
             <Route path="/list" element={<EventList />} />
+            <Route path='/services' element={<Service/>} />
 
 
             {/* Booking Route */}
