@@ -11,6 +11,8 @@ import attendenceRoute from './Routers/AttendanceRouter.js'
 import feedback from './Routers/FeedbackRouter.js'
 import path from 'path';
 import { fileURLToPath } from 'url';
+import admin from './firebaseadmin.js';
+
 
 
 
@@ -59,6 +61,22 @@ app.get('/users/profile/image/:id', async (req, res) => {
     res.status(500).json({ message: 'Error retrieving image', error: err });
   }
 });
+
+
+app.post('/auth/google', async (req, res) => {
+  const { token } = req.body;
+
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    // You can do something with decodedToken here, e.g., create a custom token or find a user in your database.
+    const customToken = await admin.auth().createCustomToken(decodedToken.uid); // Example: create a custom token
+    return res.json({ token: customToken });
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    return res.status(401).send('Unauthorized');
+  }
+});
+
 
 
 

@@ -1,6 +1,6 @@
 import express from 'express';
 import { getUserSettings, updateUserSettings, resetUserSettings, toggleNotifications, getAllUserSettings } from '../Controllers/SettingsController.js';
-import { isAdmin, verifyToken } from '../Middleware/VerifyToken.js'; // Assuming you have authentication middleware
+import {  verifyToken } from '../Middleware/VerifyToken.js'; // Assuming you have authentication middleware
 
 const router = express.Router();
 
@@ -17,6 +17,6 @@ router.post('/settings/reset', verifyToken, resetUserSettings);
 router.patch('/settings/notifications/toggle', verifyToken, toggleNotifications);
 
 // Get all users' settings (Admin route)
-router.get('/admin/settings',verifyToken,isAdmin,  getAllUserSettings);
+router.get('/admin/settings',verifyToken, getAllUserSettings);
 
 export default router;
