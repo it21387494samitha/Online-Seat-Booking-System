@@ -13,7 +13,7 @@ const upload = multer({ dest: 'uploads/' });
 
 // Public routes
 router.post('/register', RegisterUser); 
-router.post('/login', UserLogin);     
+router.post('/login',UserLogin);     
 router.get('/all', getAllUsers);
 
 

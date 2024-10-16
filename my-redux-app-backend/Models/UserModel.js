@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
       },
       displayName: {
         type: String,
-        required: true
+        
       },
       photoURL: {
         type: String
@@ -38,6 +38,7 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
+        required: true,
 
     },
     isAdmin: {

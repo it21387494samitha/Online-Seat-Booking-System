@@ -1,5 +1,5 @@
 import express from 'express';
-import { verifyToken } from '../Middleware/VerifyToken.js';
+import { isAdmin, verifyToken } from '../Middleware/VerifyToken.js';
 // import { requireAuth} from '../Middleware/authMiddleware.js'
 import { 
     CreateEvent, 
@@ -14,13 +14,14 @@ import {
 const router = express.Router();
 
 // Protected routes for event management
-router.post('/create', verifyToken, CreateEvent);
-router.get('/', verifyToken, GetEvents);
+router.post('/create', isAdmin, CreateEvent);
+router.get('/',  GetEvents);
 router.get('/all',GetEvents);
-router.get('/:eventId', verifyToken, GetEventById);
-router.put('/:eventId', verifyToken, UpdateEvent);
-router.delete('/:eventId', verifyToken, DeleteEvent);
-router.delete('/soft/:eventId',verifyToken, SoftDeleteEvent);
+router.get('/:eventId',  GetEventById);
+router.put('/:eventId',  UpdateEvent);
+router.delete('/:eventId',  DeleteEvent);
+router.delete('/soft/:eventId', SoftDeleteEvent);
+
 
 
 export default router;

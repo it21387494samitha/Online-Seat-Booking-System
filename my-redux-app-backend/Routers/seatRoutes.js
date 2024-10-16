@@ -5,47 +5,47 @@ import { ReserveSeat, CancelReservation, ViewAvailableSeats, CreateSeat, CreateS
 const router = express.Router();
 
 
-router.post('/create', verifyToken, CreateSeat);
+router.post('/create', CreateSeat);
 // Reserve a seat (protected route)
-router.post('/reserve/:eventId/:seatId', verifyToken, ReserveSeat);
+router.post('/reserve/:eventId/:seatId',  ReserveSeat);
 
 //
 router.get('/event/:eventId/booked-seats-count',GetBookedSeatCount);
 
 //
-router.post('/creat',verifyToken , CreateSeatStructure)
+router.post('/creat', CreateSeatStructure)
 
 // Cancel a reservation (protected route)
-router.post('/cancel', verifyToken, CancelReservation);
+router.post('/cancel',  CancelReservation);
 
 // View available seats for an event
-router.get('/available/:eventId', verifyToken, ViewAvailableSeats);
+router.get('/available/:eventId',  ViewAvailableSeats);
 
 // SeatBookingRouter.js
-router.get('/history', verifyToken, GetBookingHistory);
+router.get('/history',  GetBookingHistory);
 
 // Delete a booking by ID (protected route)
-router.delete('/history/:id', verifyToken, deleteBooking); 
+router.delete('/history/:id',  deleteBooking); 
 
 
 
 
-router.get('/seats', verifyToken, ViewAllSeats); // <-- New Route
+router.get('/seats',  ViewAllSeats); // <-- New Route
 
-router.get('/event/:eventId/seats', verifyToken, ViewEventSeats);
-
-
+router.get('/event/:eventId/seats',  ViewEventSeats);
 
 
 
-router.delete('/seats/:id', verifyToken,deleteSeat);
+
+
+router.delete('/seats/:id', deleteSeat);
 
 
 
 
 ///
 
-router.delete('/soft/:id',verifyToken,SoftDeleteSeat)
+router.delete('/soft/:id',SoftDeleteSeat)
 
     
 export default router;

@@ -38,6 +38,7 @@ function Login() {
       await axios.post('http://localhost:5000/users/google-login', userData);
   
       // Handle further login logic, like storing token and navigating
+      
       const token = await user.getIdToken();
       const isAdmin = adminEmails.includes(user.email);
       const userRole = isAdmin ? 'admin' : 'user';
@@ -45,6 +46,7 @@ function Login() {
       localStorage.setItem('token', token);
       localStorage.setItem('userRole', userRole);
   
+      console.log("Token after Google login:", token);
       if (isAdmin) {
         navigate('/admin');
       } else {
@@ -72,6 +74,8 @@ function Login() {
     setLoading(true);
     axios.post('http://localhost:5000/users/login', { email, password })
       .then((response) => {
+       
+
         const { token } = response.data;
         const isAdmin = adminEmails.includes(email);
         const userRole = isAdmin ? 'admin' : 'user';

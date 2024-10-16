@@ -71,6 +71,7 @@ export function RegisterUser(req, res) {
                     subscription,
                     password: hash,
                     isAdmin: isAdmin || false,
+                    
                 });
 
                 newUser.save()

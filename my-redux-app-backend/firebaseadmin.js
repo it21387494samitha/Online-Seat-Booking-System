@@ -2,8 +2,8 @@
 import admin from 'firebase-admin';
 
 admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-  });
+  credential: admin.credential.applicationDefault(), // Use your Firebase service account key
+});
   
   export const verifyGoogleToken = async (token) => {
     try {
