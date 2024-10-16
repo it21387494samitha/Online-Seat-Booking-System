@@ -9,9 +9,9 @@ import eventRoutes from './Routers/EventRoutes.js';
 import settingRoutes from './Routers/SettingRoute.js'
 import attendenceRoute from './Routers/AttendanceRouter.js'
 import feedback from './Routers/FeedbackRouter.js'
-import path from 'path';
-import { fileURLToPath } from 'url';
-import admin from './firebaseadmin.js';
+import passport from 'passport';
+import cookieParser from 'cookie-parser';
+import authroutes from './Routers/AuthRoutes.js'
 
 
 
@@ -33,6 +33,13 @@ mongoose.connect(process.env.MONGODB_URI)
 app.use(cors());
 app.use(bodyParser.json());
 
+
+
+app.use(cors({
+  origin: 'http://localhost:3000', // Allow your frontend origin
+  methods: 'POST',
+}));
+
 // Use Routes
 app.use('/users',userRoute);
 
@@ -44,6 +51,8 @@ app.use('/api',settingRoutes );
 app.use('/attendance',attendenceRoute );
 
 app.use('/api/feedback', feedback);
+
+
 
 ///// Get the current file path
 app.get('/users/profile/image/:id', async (req, res) => {
@@ -63,21 +72,10 @@ app.get('/users/profile/image/:id', async (req, res) => {
 });
 
 
-app.post('/auth/google', async (req, res) => {
-  const { token } = req.body;
+app.use(cookieParser());
+app.use(passport.initialize());
 
-  try {
-    const decodedToken = await admin.auth().verifyIdToken(token);
-    // You can do something with decodedToken here, e.g., create a custom token or find a user in your database.
-    const customToken = await admin.auth().createCustomToken(decodedToken.uid); // Example: create a custom token
-    return res.json({ token: customToken });
-  } catch (error) {
-    console.error('Error verifying token:', error);
-    return res.status(401).send('Unauthorized');
-  }
-});
-
-
+app.use('/auth', authroutes);
 
 
 

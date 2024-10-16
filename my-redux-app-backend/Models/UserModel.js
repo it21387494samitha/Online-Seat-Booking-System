@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
+import bcrypt from 'bcryptjs';
+import validator from 'validator';
+
 
 const userSchema = new mongoose.Schema({
-    firstName: { 
+    firstName: {
         type: String,
         required: true
     },
@@ -14,10 +17,7 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     email: {
-        type: String,
-        required: true,
-        unique: true,
-        lowercase: true
+        type: String, required: true, unique: true, validate: [validator.isEmail, 'Invalid email']
     },
     age: {
         type: String,
@@ -29,26 +29,49 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        
+
     },
-    isAdmin: { 
-        type: Boolean, 
-        default: false 
+    isAdmin: {
+        type: Boolean,
+        default: false
     },
     googleId: {
-         type: String,
-          unique: true 
-        }, 
+        type: String
+
+    },
 
     profileImage: {
         data: Buffer,      // Stores image data as a buffer
         contentType: String // Stores image file type (e.g., 'image/jpeg', 'image/png')
-      },
-      isDeleted:{
-        type:  Boolean,
+    },
+    isDeleted: {
+        type: Boolean,
         default: false
-    }
+    },
+
+    isVerified: {
+         type: Boolean,
+          default: false },
+
+    verificationToken: {
+         type: String
+         },
+
+
+         role: {
+             type: String,
+              enum: ['user', 'admin'],
+               default: 'user' 
+            }
 });
 
- const UserModel= mongoose.model("User", userSchema);
+
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next();
+    this.password = await bcrypt.hash(this.password, 12);
+    next();
+  });
+
+
+const UserModel = mongoose.model("User", userSchema);
 export default UserModel;

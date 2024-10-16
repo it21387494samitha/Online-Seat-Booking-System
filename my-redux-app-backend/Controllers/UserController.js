@@ -5,7 +5,13 @@ import jwt from 'jsonwebtoken';
 import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
+import admin from 'firebase-admin';
+import serviceAccount from '../online-seat-booking-1b50c-firebase-adminsdk-fj9fz-12de045057.json' assert { type: 'json' };
 
+// Initialize Firebase Admin SDK
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
 
 
@@ -20,6 +26,11 @@ const isGoogleEmail = (email) => {
     const emailDomain = email.split('@')[1];
     return emailDomain === 'gmail.com' || emailDomain.endsWith('.google.com');
 };
+
+
+
+
+
 
 // Register User
 export function RegisterUser(req, res) {
@@ -219,4 +230,41 @@ export const uploadProfileImage = async (req, res) => {
 
 
 
+  export const googleLogin = async (req, res) => {
+    try {
+      const { token } = req.body;
+      console.log('Google token received:', token);
+  
+      // Verify the Google token
+      const decodedToken = await admin.auth().verifyIdToken(token);
+      console.log('Decoded token:', decodedToken);
+  
+      const { email } = decodedToken;
+  
+      // Check if the user exists in MongoDB
+      let user = await UserModel.findOne({ email });
+      console.log('User found:', user);
+  
+      if (!user) {
+        // If user doesn't exist, create a new user
+        user = new UserModel({
+          email,
+          password: null,  // Google users don’t have a password initially
+          isVerified: true,
+          role: 'user',  // Default role
+        });
+        await user.save();
+        console.log('New user created:', user);
+      }
+  
+      // Generate JWT token for your app
+      const appToken = jwt.sign({ id: user._id, email: user.email }, secretKey, { expiresIn: '1h' });
+  
+      // Return user info and app token
+      return res.status(200).json({ userRole: user.role, token: appToken });
+    } catch (error) {
+      console.error('Error during Google login:', error);
+      return res.status(500).json({ message: 'Google login failed' });
+    }
+  };
   

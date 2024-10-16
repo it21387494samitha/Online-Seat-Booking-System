@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { auth, googleProvider } from '../../firebase';
-import { signInWithPopup, getIdToken } from 'firebase/auth';
+import { signInWithPopup } from 'firebase/auth';
 import { Link, useNavigate } from 'react-router-dom';
-import { FcGoogle } from 'react-icons/fc';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FcGoogle } from 'react-icons/fc'; 
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; 
 import './Login.css';
 
 const adminEmails = ['dhananjayasamitha68@gmail.com'];
@@ -13,88 +13,84 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [passwordVisible, setPasswordVisible] = useState(false); // Password toggle state
+  const [passwordVisible, setPasswordVisible] = useState(false); 
   const navigate = useNavigate();
 
-  // Function to handle Google login
-  const handleGoogleLogin = async () => {
-    setLoading(true);
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
+
+const handleGoogleLogin = () => {
+  setLoading(true);
+  signInWithPopup(auth, googleProvider)
+    .then(async (result) => {
       const user = result.user;
+      const email = user.email;
+      const token = await user.getIdToken(); 
 
-      // Get Firebase ID token
-      const token = await getIdToken(user);
+      // Log the Google token to inspect it
+      console.log('Google Token:', token);
 
-      // Send the Firebase ID token to your backend for verification
-      const response = await axios.post('http://localhost:5000/auth/google', { token });
-      const backendToken = response.data.token;
+      if (email.endsWith('@gmail.com')) {
+        axios.post('http://localhost:5000/users/google-login', { token })
+          .then(response => {
+            const { userRole } = response.data; 
+            localStorage.setItem('token', token);
+            localStorage.setItem('userRole', userRole);
 
-      // Store the backend JWT token and user role
-      localStorage.setItem('token', backendToken);
-      const isAdmin = adminEmails.includes(user.email);
-      const userRole = isAdmin ? 'admin' : 'user';
-      localStorage.setItem('userRole', userRole);
+            alert('Login successful!');
 
-      // Fetch user data after successful login
-      await fetchData();
-
-      alert('Login successful!');
-      navigate('/');
-    } catch (error) {
+            if (userRole === 'admin') {
+              navigate('/admin');
+            } else {
+              navigate('/');
+            }
+          })
+          .catch(error => {
+            console.error('Error saving user to backend:', error);
+            alert('Login failed. Please try again.');
+          });
+      } else {
+        auth.signOut();
+        alert('Only Google emails are allowed.');
+      }
+    })
+    .catch((error) => {
       console.error('Error during Google login:', error);
-      alert('Login failed.');
-    } finally {
-      setLoading(false);
-    }
-  };
+      alert('Login failed. Please try again.');
+    })
+    .finally(() => setLoading(false));
+};
 
-  // Function to handle email login
-  const handleEmailLogin = async () => {
+
+  
+  
+
+  const handleEmailLogin = () => {
     if (!email || !password) {
       alert('Please enter both email and password.');
       return;
     }
 
     setLoading(true);
-    try {
-      const response = await axios.post('http://localhost:5000/users/login', { email, password });
-      const { token } = response.data;
-      const isAdmin = adminEmails.includes(email);
-      const userRole = isAdmin ? 'admin' : 'user';
+    axios.post('http://localhost:5000/users/login', { email, password })
+      .then((response) => {
+        const { token } = response.data;
+        const isAdmin = adminEmails.includes(email);
+        const userRole = isAdmin ? 'admin' : 'user';
 
-      // Store the backend JWT token and user role
-      localStorage.setItem('token', token);
-      localStorage.setItem('userRole', userRole);
+        alert('Login successful!');
+        localStorage.setItem('token', token);
+        localStorage.setItem('userRole', userRole);
 
-      alert('Login successful!');
-      navigate(isAdmin ? '/admin' : '/');
-    } catch (error) {
-      console.error('Error during email login:', error);
-      alert('Login failed. Incorrect email or password.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Function to fetch protected data after login
-  const fetchData = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      console.error('No token found in localStorage');
-      return;
-    }
-
-    try {
-      const response = await axios.get('http://localhost:5000/protected-route', {
-        headers: {
-          'Authorization': `Bearer ${token}`, // Pass the JWT token in the Authorization header
-        },
-      });
-      console.log('Fetched user data:', response.data);
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
+        if (isAdmin) {
+          navigate('/admin');
+        } else {
+          navigate('/');
+        }
+      })
+      .catch((error) => {
+        console.error('Error during email login:', error);
+        alert('Login failed. Incorrect email or password.');
+      })
+      .finally(() => setLoading(false));
   };
 
   return (

@@ -1,5 +1,6 @@
 import express from 'express';
 import { verifyToken } from '../Middleware/VerifyToken.js';
+// import { requireAuth} from '../Middleware/authMiddleware.js'
 import { 
     CreateEvent, 
     GetEvents, 

@@ -17,13 +17,15 @@ const EventList = () => {
     const fetchEvents = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5000/api/events', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+const response = await axios.get('http://localhost:5000/api/events', {
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+          
         });
 
         const today = new Date().toLocaleDateString('en-US');
+
 
         const upcomingEvents = response.data.filter((event) => {
           const eventDate = new Date(event.date).toLocaleDateString('en-US');
@@ -31,6 +33,7 @@ const EventList = () => {
         });
 
         setEvents(upcomingEvents);
+        console.log(token);
       } catch (error) {
         console.error('Error fetching events:', error);
         setError('Failed to fetch events.');

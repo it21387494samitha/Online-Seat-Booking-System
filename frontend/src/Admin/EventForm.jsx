@@ -100,18 +100,19 @@ const EventForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // Check if an event already exists for the selected date
+    
     const eventExists = existingEvents.some(
       (event) => new Date(event.date).toISOString().split('T')[0] === formData.date
     );
   
     if (eventExists) {
       setMessage('An event already exists for this date. Please choose another date.');
-      return; // Stop submission if an event already exists
+      return; 
     }
   
     try {
       const token = localStorage.getItem('token');
+
       const response = await axios.post(
         'http://localhost:5000/api/events/create',
         formData,
@@ -119,7 +120,10 @@ const EventForm = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+          
+
+        },
+        console.log(token)
       );
   
       if (response.status === 201) {

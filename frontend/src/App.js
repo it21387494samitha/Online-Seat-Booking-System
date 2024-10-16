@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google'; // Import the provider
 import Register from '../src/Pages/Login/RegisterPage';
 import Login from '../src/Pages/Login/Login';
 import CustomerDash from './Pages/Home/CustomerDash';
@@ -21,7 +22,6 @@ import ManageUsers from './Admin/ManageUsers';
 import QR from './Admin/QRCodeDisplay';
 import Service from './Pages/Service/Service';
 
-
 function App() {
   // Manage sidebar open/collapse state
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -30,23 +30,24 @@ function App() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  
+
   return (
-    <Router>
-      
-        {/* Pass sidebar state and toggle function to Header */}
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+      <Router>
+       
         <Header />
 
-        <Sidebar /> {/* Pass isOpen to Sidebar */}
-        
-        <div className={`main-content }`}> 
+        <Sidebar /> 
+        <div className={`main-content `}>
           <Routes>
             {/* Admin Routes */}
             <Route path="/event" element={<EventForm />} />
             <Route path="/admin" element={<AdminDash />} />
             <Route path="/ad" element={<AdminSeatManagement />} />
             <Route path="/allseat" element={<AdminSeatBooking />} />
-            <Route path="/manage-users"  element={<ManageUsers/>} />
-            <Route path="/QR"  element={<QR/>} />
+            <Route path="/manage-users" element={<ManageUsers />} />
+            <Route path="/QR" element={<QR />} />
 
             {/* Customer Routes */}
             <Route path="/register" element={<Register />} />
@@ -54,22 +55,20 @@ function App() {
             <Route path="/" element={<CustomerDash />} />
             <Route path="/mevent" element={<ManageEvents />} />
             <Route path="/list" element={<EventList />} />
-            <Route path='/services' element={<Service/>} />
-
+            <Route path='/services' element={<Service />} />
 
             {/* Booking Route */}
             <Route path="/booking/:eventId" element={<SeatBooking />} />
-            <Route path='/profile' element={<Profile/>} />
-            <Route path='/p' element={<ProfileImageUpload/>} />
-            <Route path='/history' element={<BookingHistory/>} />
+            <Route path='/profile' element={<Profile />} />
+            <Route path='/p' element={<ProfileImageUpload />} />
+            <Route path='/history' element={<BookingHistory />} />
             
-
-            {/* setting route */}
-            <Route path='/settings' element={<Settings/>} />
+            {/* Setting Route */}
+            <Route path='/settings' element={<Settings />} />
           </Routes>
         </div>
-     
-    </Router>
+      </Router>
+    </GoogleOAuthProvider> 
   );
 }
 
