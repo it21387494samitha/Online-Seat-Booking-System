@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import admin from "firebase-admin";
 
 dotenv.config(); // To load environment variables from .env file
 
@@ -36,3 +37,6 @@ export const isAdmin = (req, res, next) => {
 
     next(); // Proceed if user is an admin
 };
+
+
+

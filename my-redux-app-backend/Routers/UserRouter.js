@@ -2,7 +2,8 @@ import express from 'express';
 import { verifyToken } from '../Middleware/VerifyToken.js'; 
 import { getAllUsers, getUserProfile, googleLogin, RegisterUser, uploadProfileImage, UserLogin } from '../Controllers/UserController.js'; 
 import multer from 'multer';
-import admin from 'firebase-admin';             // Import Firebase Admin SDK setup
+import admin from 'firebase-admin'; 
+import User from '../Models/UserModel.js';            // Import Firebase Admin SDK setup
 
 
 const router = express.Router();
@@ -41,8 +42,31 @@ router.get('/protected-route',verifyToken,(req,res)=>{
 })
 
 
-router.post('/google-login', googleLogin);
-
+router.post('/google-login', async (req, res) => {
+    const { email, displayName, photoURL, uid } = req.body;
+  
+    try {
+      // Check if the user already exists
+      let user = await User.findOne({ email });
+  
+      // If the user doesn't exist, create a new one
+      if (!user) {
+        user = new User({
+          email,
+          displayName,
+          photoURL,
+          uid,
+        });
+        await user.save();
+      }
+  
+      res.status(200).json({ message: 'User logged in successfully', user });
+    } catch (error) {
+      console.error('Error saving user to DB: ', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
 
 
 

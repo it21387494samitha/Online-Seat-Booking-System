@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { auth, googleProvider } from '../../firebase';
-import { signInWithPopup } from 'firebase/auth';
+import { auth,provider} from '../../firebase';
+// import { signInWithPopup } from 'firebase/auth';
 import { Link, useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc'; 
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; 
 import './Login.css';
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 const adminEmails = ['dhananjayasamitha68@gmail.com'];
 
@@ -17,47 +18,46 @@ function Login() {
   const navigate = useNavigate();
 
 
-const handleGoogleLogin = () => {
-  setLoading(true);
-  signInWithPopup(auth, googleProvider)
-    .then(async (result) => {
+  const handleGoogleLogin = async () => {
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+    
+    try {
+      const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      const email = user.email;
-      const token = await user.getIdToken(); 
-
-      // Log the Google token to inspect it
-      console.log('Google Token:', token);
-
-      if (email.endsWith('@gmail.com')) {
-        axios.post('http://localhost:5000/users/google-login', { token })
-          .then(response => {
-            const { userRole } = response.data; 
-            localStorage.setItem('token', token);
-            localStorage.setItem('userRole', userRole);
-
-            alert('Login successful!');
-
-            if (userRole === 'admin') {
-              navigate('/admin');
-            } else {
-              navigate('/');
-            }
-          })
-          .catch(error => {
-            console.error('Error saving user to backend:', error);
-            alert('Login failed. Please try again.');
-          });
+  
+      // Capture user details
+      const userData = {
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        uid: user.uid
+      };
+  
+      // Send user data to backend
+      await axios.post('http://localhost:5000/users/google-login', userData);
+  
+      // Handle further login logic, like storing token and navigating
+      const token = await user.getIdToken();
+      const isAdmin = adminEmails.includes(user.email);
+      const userRole = isAdmin ? 'admin' : 'user';
+  
+      localStorage.setItem('token', token);
+      localStorage.setItem('userRole', userRole);
+  
+      if (isAdmin) {
+        navigate('/admin');
       } else {
-        auth.signOut();
-        alert('Only Google emails are allowed.');
+        navigate('/');
       }
-    })
-    .catch((error) => {
+  
+      console.log('User signed in and data sent to backend: ', user);
+  
+    } catch (error) {
       console.error('Error during Google login:', error);
-      alert('Login failed. Please try again.');
-    })
-    .finally(() => setLoading(false));
-};
+    }
+  };
+  
 
 
   
@@ -102,18 +102,10 @@ const handleGoogleLogin = () => {
         <h2 className="text-3xl font-semibold text-white mb-4 text-center">Welcome Back!</h2>
         <p className="text-sm text-gray-200 mb-6 text-center">Sign in to continue</p>
 
-        <button
-          className={`w-full flex items-center justify-center bg-white text-gray-800 py-3 px-6 rounded-lg shadow-lg transition-transform hover:scale-105 mb-4 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-          onClick={handleGoogleLogin}
-          disabled={loading}
-        >
-          {loading ? 'Signing in...' : (
-            <>
-              <FcGoogle className="text-xl mr-3" />
-              Sign in with Google
-            </>
-          )}
-        </button>
+        <button onClick={handleGoogleLogin} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+  Sign in with Google
+</button>
+
 
         <div className="space-y-4">
           <input

@@ -14,6 +14,10 @@ import cookieParser from 'cookie-parser';
 import authroutes from './Routers/AuthRoutes.js'
 
 
+import { OAuth2Client } from "google-auth-library";
+const client = new OAuth2Client("487049466992-6acu3fqq1ths32g98ceigh9lq085h0oo.apps.googleusercontent.com");
+
+
 
 
 dotenv.config();
@@ -35,6 +39,14 @@ app.use(bodyParser.json());
 
 
 
+
+
+
+
+
+
+
+
 app.use(cors({
   origin: 'http://localhost:3000', // Allow your frontend origin
   methods: 'POST',
@@ -52,22 +64,26 @@ app.use('/attendance',attendenceRoute );
 
 app.use('/api/feedback', feedback);
 
+app.post("/users", async (req, res) => {
+  console.log('Google login data received:', req.body);
+  const { token } = req.body;
 
-
-///// Get the current file path
-app.get('/users/profile/image/:id', async (req, res) => {
   try {
-    const user = await UserModel.findById(req.params.id);
+    // Verify the token using Google OAuth2Client
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: "487049466992-6acu3fqq1ths32g98ceigh9lq085h0oo.apps.googleusercontent.com", // Replace with your Google Client ID
+    });
 
-    if (!user || !user.profileImage) {
-      return res.status(404).json({ message: 'Image not found' });
-    }
+    const payload = ticket.getPayload();
+    const { name, email, picture } = payload;
 
-    // Set the content type and send the image buffer
-    res.contentType(user.profileImage.contentType);
-    res.send(user.profileImage.data);
-  } catch (err) {
-    res.status(500).json({ message: 'Error retrieving image', error: err });
+    // Proceed with your application logic (e.g., creating a user session or saving user data to the DB)
+
+    res.status(200).json({ name, email, picture });
+  } catch (error) {
+    console.error("Error during token verification:", error);
+    res.status(500).json({ error: "Internal Server Error during Google login" });
   }
 });
 

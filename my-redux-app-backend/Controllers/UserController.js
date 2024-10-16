@@ -6,12 +6,12 @@ import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
 import admin from 'firebase-admin';
-import serviceAccount from '../online-seat-booking-1b50c-firebase-adminsdk-fj9fz-12de045057.json' assert { type: 'json' };
+// import serviceAccount from '../online-seat-booking-1b50c-firebase-adminsdk-fj9fz-12de045057.json' assert { type: 'json' };
 
 // Initialize Firebase Admin SDK
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+// });
 
 
 
@@ -131,7 +131,7 @@ export function UserLogin(req, res) {
         });
 }
 
-// Create Admin User
+
 export function CreateAdmin(req, res) {
     const { email, password } = req.body;
 
@@ -163,7 +163,7 @@ export function CreateAdmin(req, res) {
 
 
 
-// Fetch all users
+
 export function getAllUsers(req, res) {
     UserModel.find({})
         .then(users => {
@@ -194,13 +194,6 @@ export function getUserProfile(req, res) {
 }
 
 
-
-
-
-
-/////////////////////////////////////////////////////
-
-// Route to update user profile image
 
 
 

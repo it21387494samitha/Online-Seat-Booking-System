@@ -6,22 +6,31 @@ import validator from 'validator';
 const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
-        required: true
+       
     },
     lastName: {
         type: String,
-        required: true
+        
     },
     phone: {
         type: Number,
-        required: true
+       
     },
     email: {
-        type: String, required: true, unique: true, validate: [validator.isEmail, 'Invalid email']
-    },
-    age: {
+        type: String,
+        required: true,
+        unique: true
+      },
+      displayName: {
         type: String,
         required: true
+      },
+      photoURL: {
+        type: String
+      },
+    age: {
+        type: String,
+       
     },
     subscription: {  // Fixed typo
         type: Boolean,
@@ -36,14 +45,11 @@ const userSchema = new mongoose.Schema({
         default: false
     },
     googleId: {
-        type: String
-
+        type: String,
+        unique: true
     },
 
-    profileImage: {
-        data: Buffer,      // Stores image data as a buffer
-        contentType: String // Stores image file type (e.g., 'image/jpeg', 'image/png')
-    },
+   
     isDeleted: {
         type: Boolean,
         default: false
@@ -62,8 +68,13 @@ const userSchema = new mongoose.Schema({
              type: String,
               enum: ['user', 'admin'],
                default: 'user' 
-            }
-});
+            },
+
+
+         
+            
+        }, { timestamps: true });
+;
 
 
 userSchema.pre('save', async function (next) {

@@ -1,11 +1,16 @@
+
 import admin from 'firebase-admin';
 
-// Firebase Admin SDK configuration
-import serviceAccount from './online-seat-booking-1b50c-firebase-adminsdk-fj9fz-12de045057.json' assert { type: 'json' };
-
-
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-});
-
-export default admin;
+    credential: admin.credential.applicationDefault(),
+  });
+  
+  export const verifyGoogleToken = async (token) => {
+    try {
+      const decodedToken = await admin.auth().verifyIdToken(token);
+      console.log("Decoded token:", decodedToken);
+      return decodedToken;
+    } catch (error) {
+      console.error("Error verifying token:", error);
+    }
+  };
