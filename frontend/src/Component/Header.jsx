@@ -1,13 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SideBar from './SideBar'; 
 import Logo from '../Assest/SLT_logo.png'; 
-import { FaSearch, FaBars, FaHome, FaInfoCircle, FaServicestack, FaEnvelope, FaUser } from 'react-icons/fa'; 
+import { FaSearch, FaBars, FaHome, FaInfoCircle, FaServicestack, FaEnvelope } from 'react-icons/fa'; 
 
 const Header = ({ toggleSidebar, isOpen, isDarkMode, toggleTheme }) => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [profilePicture, setProfilePicture] = useState(null);
+
+  useEffect(() => {
+    // Check if user profile picture is stored in localStorage
+    const storedProfilePicture = localStorage.getItem('profilePicture');
+    if (storedProfilePicture) {
+      setProfilePicture(storedProfilePicture);
+    }
+  }, []);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
@@ -15,30 +23,20 @@ const Header = ({ toggleSidebar, isOpen, isDarkMode, toggleTheme }) => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    
     if (searchQuery.trim()) {
       navigate(`/${searchQuery}`);
     }
   };
 
-  const handleclick = () => {
-    const user = localStorage.getItem('userRole');
-
-    if(user==='admin'){
-      navigate('/admin');
-    }
-    else{
-      navigate('/')
-    }
+  const handleProfileClick = () => {
+    // Navigate to profile page or show a dropdown menu
+    navigate('/profile');
   };
-
-
 
   return (
     <>
-      <header className={`bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 shadow-lg fixed top-0 w-full z-50 flex items-center justify-between px-8 py-4`}>
-        {/* Logo and Title */}
-        <div className="flex items-center space-x-3 cursor-pointer" onClick={handleclick}>
+      <header className="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 shadow-lg fixed top-0 w-full z-50 flex items-center justify-between px-8 py-4">
+        <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/')}>
           <img src={Logo} alt="Logo" className="w-14 h-14 object-contain ml-5" /> 
           <div className="text-3xl font-bold text-white ml-5">
             Online Reservation
@@ -59,7 +57,6 @@ const Header = ({ toggleSidebar, isOpen, isDarkMode, toggleTheme }) => {
             <FaEnvelope /> <span>Contact</span>
           </a>
 
-          {/* Search Box */}
           <form onSubmit={handleSearch} className="relative">
             <input
               type="text"
@@ -77,19 +74,27 @@ const Header = ({ toggleSidebar, isOpen, isDarkMode, toggleTheme }) => {
             Sign Up
           </a>
 
-          <a href="/login" className="bg-pink-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-pink-700 transition">
-            Login
-          </a>
+          {/* Conditional rendering of Profile Image or Login Button */}
+          {profilePicture ? (
+            <img
+              src={profilePicture}
+              alt="Profile"
+              className="w-10 h-10 rounded-full cursor-pointer"
+              onClick={handleProfileClick} // Navigate to profile on click
+            />
+          ) : (
+            <a href="/login" className="bg-pink-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-pink-700 transition">
+              Login
+            </a>
+          )}
         </nav>
 
-        {/* Mobile Hamburger Menu */}
         <div className="md:hidden flex items-center space-x-3">
           <button onClick={toggleMobileMenu} className="text-white text-2xl">
             <FaBars />
           </button>
         </div>
 
-        {/* Mobile Menu Dropdown */}
         {isMobileMenuOpen && (
           <div className="absolute top-16 right-8 bg-white text-gray-800 rounded-lg shadow-lg py-2 w-48 z-50">
             <a href="/" className="block px-4 py-2 hover:bg-gray-100">Home</a>
