@@ -13,11 +13,11 @@ function AdminDash() {
     const fetchDashboardData = async () => {
       try {
         // Fetch Events
-        const eventsResponse = await fetch('http://localhost:5000/api/events/all');
+        const eventsResponse = await fetch('http://localhost:5000/events/count');
         if (!eventsResponse.ok) throw new Error(`HTTP error! Status: ${eventsResponse.status}`);
         const eventsData = await eventsResponse.json();
         if (Array.isArray(eventsData)) {
-          setEventCount(eventsData.length); // Count events
+          setEventCount(eventsData.length); 
         }
 
         // Fetch Users
