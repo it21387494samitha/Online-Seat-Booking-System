@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaUser, FaEnvelope, FaPhone, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { FaUser, FaEnvelope } from 'react-icons/fa';
 import ReactPaginate from 'react-paginate'; // Pagination
 import { CSVLink } from 'react-csv'; // CSV export
 import { jsPDF } from 'jspdf'; // PDF export
@@ -71,16 +71,15 @@ function ManageUsers() {
   // Export to PDF
   const exportPDF = () => {
     const doc = new jsPDF();
-    const tableColumn = ["First Name", "Last Name", "Email", "Phone", "Subscription"];
+    const tableColumn = [ "Name", "Email"];
     const tableRows = [];
 
     users.forEach(user => {
       const userData = [
-        user.firstName,
-        user.lastName,
+        user.username,
+        
         user.email,
-        user.phone,
-        user.subscription ? "Active" : "Inactive"
+
       ];
       tableRows.push(userData);
     });
@@ -135,17 +134,15 @@ function ManageUsers() {
             <table className="min-w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600">
               <thead>
                 <tr className="bg-gray-200 dark:bg-gray-900 text-gray-600 dark:text-gray-400 uppercase text-sm leading-normal">
-                  <th className="py-3 px-6 text-left cursor-pointer" onClick={() => handleSort('firstName')}>
-                    First Name {sortField === 'firstName' && (sortDirection === 'asc' ? '▲' : '▼')}
+                  <th className="py-3 px-6 text-left cursor-pointer" onClick={() => handleSort('username')}>
+                    First Name {sortField === 'username' && (sortDirection === 'asc' ? '▲' : '▼')}
                   </th>
-                  <th className="py-3 px-6 text-left cursor-pointer" onClick={() => handleSort('lastName')}>
-                    Last Name {sortField === 'lastName' && (sortDirection === 'asc' ? '▲' : '▼')}
-                  </th>
+                 
                   <th className="py-3 px-6 text-left cursor-pointer" onClick={() => handleSort('email')}>
                     Email {sortField === 'email' && (sortDirection === 'asc' ? '▲' : '▼')}
                   </th>
-                  <th className="py-3 px-6 text-left">Phone</th>
-                  <th className="py-3 px-6 text-left">Subscription</th>
+               
+                  
                 </tr>
               </thead>
               <tbody className="text-gray-600 dark:text-gray-300 text-sm font-light">
@@ -154,10 +151,9 @@ function ManageUsers() {
                     <td className="py-3 px-6 text-left whitespace-nowrap">
                       <div className="flex items-center">
                         <FaUser className="text-blue-500 dark:text-blue-400 mr-2" />
-                        <span>{user.firstName}</span>
+                        <span>{user.username}</span>
                       </div>
                     </td>
-                    <td className="py-3 px-6 text-left">{user.lastName}</td>
                     <td className="py-3 px-6 text-left">
                       <div className="flex items-center">
                         <FaEnvelope className="text-yellow-500 dark:text-yellow-400 mr-2" />
@@ -165,20 +161,10 @@ function ManageUsers() {
                       </div>
                     </td>
                     <td className="py-3 px-6 text-left">
-                      <div className="flex items-center">
-                        <FaPhone className="text-green-500 dark:text-green-400 mr-2" />
-                        <span>{user.phone}</span>
-                      </div>
+
                     </td>
                     <td className="py-3 px-6 text-left">
-                      <div className="flex items-center">
-                        {user.subscription ? (
-                          <FaCheckCircle className="text-green-500 dark:text-green-400 mr-2" />
-                        ) : (
-                          <FaTimesCircle className="text-red-500 dark:text-red-400 mr-2" />
-                        )}
-                        <span>{user.subscription ? 'Active' : 'Inactive'}</span>
-                      </div>
+
                     </td>
                   </tr>
                 ))}
