@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardActionArea, Typography, Grid, Container, Alert, CardMedia } from '@mui/material';
-import { styled } from '@mui/system';
+
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import EventIcon from '@mui/icons-material/Event';
 import img1 from '../../Assest/noevent.png'
-import { Media } from 'accessible-astro-components';
+
 
 const EventList = () => {
   const [events, setEvents] = useState([]);
@@ -17,7 +17,7 @@ const EventList = () => {
     const fetchEvents = async () => {
       try {
         const token = localStorage.getItem('token');
-const response = await axios.get('http://localhost:5000/api/events', {
+const response = await axios.get('http://localhost:5000/events/', {
   headers: {
     Authorization: `Bearer ${token}`,
   },
@@ -61,7 +61,7 @@ const response = await axios.get('http://localhost:5000/api/events', {
     return groups;
   }, {});
 
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',];
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
 
   return (
