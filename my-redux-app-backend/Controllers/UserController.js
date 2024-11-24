@@ -5,13 +5,8 @@ import jwt from 'jsonwebtoken';
 import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
-import admin from 'firebase-admin';
-// import serviceAccount from '../online-seat-booking-1b50c-firebase-adminsdk-fj9fz-12de045057.json' assert { type: 'json' };
 
-// Initialize Firebase Admin SDK
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-// });
+
 
 
 
@@ -96,41 +91,21 @@ export function RegisterUser(req, res) {
 
 
 // User Login
-export function UserLogin(req, res) {
+export const UserLogin = async (req, res) => {
     const { email, password } = req.body;
-
-    // Find user by email
-    UserModel.findOne({ email })
-        .then(user => {
-            if (!user) {
-                return res.status(404).json({ message: "User not found" });
-            }
-
-            // Compare password
-            bcrypt.compare(password, user.password)
-                .then(isMatch => {
-                    if (isMatch) {
-                        // Create JWT token
-                        const token = jwt.sign(
-                            { id: user._id, email: user.email, isAdmin: user.isAdmin },
-                            secretKey,  // Use a secure key
-                            { expiresIn: '1h' }  // Token expiration time
-                        );
-
-                        // Send the token to the client
-                        res.status(200).json({ message: "Login successful", token });
-                    } else {
-                        res.status(400).json({ message: "Invalid credentials" });
-                    }
-                })
-                .catch(err => {
-                    res.status(500).json({ message: "Error comparing passwords", error: err });
-                });
-        })
-        .catch(err => {
-            res.status(500).json({ message: "Error finding user", error: err });
-        });
-}
+    try {
+      const user = await UserModel.findOne({ email });
+      if (!user) return res.status(400).json({ message: 'User not found' });
+  
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+  
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      res.json({ token });
+    } catch (error) {
+      res.status(500).json({ message: 'Error logging in user' });
+    }
+  };
 
 
 export function CreateAdmin(req, res) {
@@ -178,22 +153,21 @@ export function getAllUsers(req, res) {
 
 
 // Fetch user profile
-export function getUserProfile(req, res) {
-    const userId = req.user.id; // Extracted from the JWT token
+export const getUserProfile = async (req, res) => {
+    try {
+        const user = await UserModel.findById(req.user.id);  // req.user.id should come from the middleware
+        if (!user) return res.status(404).json({ message: 'User not found' });
 
-    UserModel.findById(userId)
-        .select('-password') // Exclude password
-        .then(user => {
-            if (!user) {
-                return res.status(404).json({ message: "User not found" });
-            }
-            res.status(200).json(user);
-        })
-        .catch(err => {
-            res.status(500).json({ message: "Error fetching user", error: err });
+        res.status(200).json({
+            username: user.username,
+            email: user.email,
+            profilePicture: user.profilePicture|| 'https://img.freepik.com/premium-photo/stylish-man-flat-vector-profile-picture-ai-generated_606187-310.jpg'
         });
-}
-
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching profile', error });
+        console.log(user);
+    }
+};
 
 
 
@@ -224,41 +198,5 @@ export const uploadProfileImage = async (req, res) => {
 
 
 
-  export const googleLogin = async (req, res) => {
-    try {
-      const { token } = req.body;
-      console.log('Google token received:', token);
-  
-      // Verify the Google token
-      const decodedToken = await admin.auth().verifyIdToken(token);
-      console.log('Decoded token:', decodedToken);
-  
-      const { email } = decodedToken;
-  
-      // Check if the user exists in MongoDB
-      let user = await UserModel.findOne({ email });
-      console.log('User found:', user);
-  
-      if (!user) {
-        // If user doesn't exist, create a new user
-        user = new UserModel({
-          email,
-          password: null,  // Google users don’t have a password initially
-          isVerified: true,
-          role: 'user',  // Default role
-        });
-        await user.save();
-        console.log('New user created:', user);
-      }
-  
-      // Generate JWT token for your app
-      const appToken = jwt.sign({ id: user._id, email: user.email }, secretKey, { expiresIn: '1h' });
-  
-      // Return user info and app token
-      return res.status(200).json({ userRole: user.role, token: appToken });
-    } catch (error) {
-      console.error('Error during Google login:', error);
-      return res.status(500).json({ message: 'Google login failed' });
-    }
-  };
+
   

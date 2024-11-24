@@ -1,63 +1,38 @@
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-import admin from "firebase-admin";
+import UserModel from '../Models/UserModel.js';
 
-dotenv.config(); // To load environment variables from .env file
+export const VerifyToken = async (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
 
-const secretKey = process.env.JWT_SECRET || "samitha"; // Use .env variable or fallback to hardcoded
+  if (!token) {
+      return res.status(401).json({ message: 'No token provided' });
+  }
 
-// Verify JWT token
+  try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await UserModel.findById(decoded.id);
 
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
 
-export const verifyToken = async (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ message: 'Access denied, no token provided' });
-    }
-
-    const token = authHeader.split(' ')[1];
-    console.log("Token received:", token); // Log the received token
-
-    try {
-        // Attempt to verify as a Google token first
-        const decoded = await admin.auth().verifyIdToken(token);
-        console.log("Decoded Google token:", decoded); // Log decoded Google token
-        req.user = {
-            id: decoded.uid, // Firebase User ID
-            email: decoded.email,
-            isAdmin: false, // Default to false; adjust as needed
-        };
-        next();
-    } catch (err) {
-        console.error("Google token verification failed:", err); // Log verification error
-        // If Google verification fails, try to verify as a normal JWT
-        try {
-            const decoded = jwt.verify(token, secretKey);
-            console.log("Decoded JWT token:", decoded); // Log decoded JWT token
-            req.user = decoded; // Attach user info to request object
-            next(); // Proceed to the next middleware/route handler
-        } catch (err) {
-            console.error("JWT token verification failed:", err); // Log verification error
-            return res.status(401).json({ message: 'Invalid token' });
-        }
-    }
+      req.user = user; // Populate `req.user` with user data, including role
+      next();
+  } catch (err) {
+      res.status(403).json({ message: 'Failed to authenticate token' });
+  }
 };
 
 
+// In Middleware/VerifyRole.js
+export const verifyRole = (roles) => (req, res, next) => {
+  const { role } = req.user; // Ensure `req.user` has been populated by token verification middleware
 
-// Check if user is an admin
-export const isAdmin = (req, res, next) => {
-    if (!req.user) {
-        return res.status(401).json({ message: 'Access denied, user not authenticated' });
-    }
-    
-    if (!req.user.isAdmin) {
-        return res.status(403).json({ message: 'Admin access required' });
-    }
-
-    next(); // Proceed if user is an admin
+  if (!roles.includes(role)) {
+      return res.status(403).json({ message: 'Access denied. Insufficient permissions.' });
+  }
+  next();
 };
 
 
-
+export default VerifyToken;

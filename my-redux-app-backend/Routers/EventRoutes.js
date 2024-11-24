@@ -1,26 +1,30 @@
 import express from 'express';
-import { isAdmin, verifyToken } from '../Middleware/VerifyToken.js';
-// import { requireAuth} from '../Middleware/authMiddleware.js'
+import VerifyToken, { verifyRole } from '../Middleware/VerifyToken.js';
+
 import { 
     CreateEvent, 
     GetEvents, 
     GetEventById, 
     UpdateEvent, 
     DeleteEvent,
-    SoftDeleteEvent, 
+    SoftDeleteEvent,
+    GetEventsforadmin,
+    GetEventsCount, 
 
 } from '../Controllers/EventController.js';
 
 const router = express.Router();
 
 // Protected routes for event management
-router.post('/create', isAdmin, CreateEvent);
-router.get('/',  GetEvents);
-router.get('/all',GetEvents);
-router.get('/:eventId',  GetEventById);
-router.put('/:eventId',  UpdateEvent);
-router.delete('/:eventId',  DeleteEvent);
-router.delete('/soft/:eventId', SoftDeleteEvent);
+router.post('/',VerifyToken, verifyRole(['admin']),CreateEvent);
+router.get('/', VerifyToken, GetEvents);
+router.get('/all',VerifyToken,GetEvents);
+router.get('/allad',VerifyToken,verifyRole(['admin']),GetEventsforadmin);
+router.get('/count',GetEventsCount);
+router.get('/:eventId', VerifyToken, GetEventById);
+router.put('/:eventId',  VerifyToken,UpdateEvent);
+router.delete('/:eventId',  VerifyToken,DeleteEvent);
+router.delete('/soft/:eventId',VerifyToken, SoftDeleteEvent);
 
 
 

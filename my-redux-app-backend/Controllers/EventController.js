@@ -1,7 +1,6 @@
 import EventModel from '../Models/EventModel.js';
 import QRCode from 'qrcode';
 
-// Create an event
 
 
 // Create an event
@@ -39,6 +38,25 @@ export const CreateEvent = async (req, res) => {
 
 // Get all events
 export const GetEvents = async (req, res) => {
+    try {
+        const events = await EventModel.find({isDeleted:false});
+        res.status(200).json(events);
+    } catch (error) {
+        res.status(500).json({ message: 'Error retrieving events', error });
+    }
+};
+
+export const GetEventsforadmin = async (req, res) => {
+    try {
+        const events = await EventModel.find({isDeleted:false});
+        res.status(200).json(events);
+    } catch (error) {
+        res.status(500).json({ message: 'Error retrieving events', error });
+    }
+};
+
+
+export const GetEventsCount = async (req, res) => {
     try {
         const events = await EventModel.find({isDeleted:false});
         res.status(200).json(events);
