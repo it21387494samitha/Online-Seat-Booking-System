@@ -30,7 +30,7 @@ const SeatBooking = () => {
       setSeats(seatResponse.data);
 
       const eventResponse = await axios.get(
-        `http://localhost:5000/api/events/${eventId}`,
+        `http://localhost:5000/events/${eventId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
