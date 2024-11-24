@@ -23,6 +23,7 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token'); // Clear the token
+    localStorage.removeItem('profilePicture')
     setIsLoggedIn(false);
     navigate('/login'); // Redirect to login page
   };
