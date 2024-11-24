@@ -114,7 +114,7 @@ const EventForm = () => {
       const token = localStorage.getItem('token');
 
       const response = await axios.post(
-        'http://localhost:5000/api/events/create',
+        'http://localhost:5000/events/',
         formData,
         {
           headers: {
@@ -174,7 +174,7 @@ const EventForm = () => {
     const fetchExistingEvents = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5000/api/events', {
+        const response = await axios.get('http://localhost:5000/events', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
