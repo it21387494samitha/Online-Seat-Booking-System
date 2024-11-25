@@ -186,7 +186,7 @@ const EventForm = () => {
     };
   
     fetchExistingEvents();
-    calculateCurrentWeek(); // Keep this if you still need to calculate min and max dates
+    calculateCurrentWeek(); 
   }, []);
   
 
