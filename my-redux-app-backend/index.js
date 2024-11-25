@@ -75,10 +75,12 @@ connectDB()
         app.use('/api/feedback',feedbackRouter);
 
 
-        app.use(express.static("../frontend/build"));
-        app.get("*",(req, res)=>{
-            res.sendFile(path.resolve(_dirname, "frontend","build","index.html") )
+        app.use(express.static(path.join(__dirname, 'build')));
+
+        app.get('*', (req, res) => {
+            res.sendFile(path.join(__dirname, 'build', 'index.html'));
         });
+        
 
 
 
